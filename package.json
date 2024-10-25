@@ -1,13 +1,13 @@
 {
   "name": "particle-life",
   "version": "1.0.0",
-  "description": "",
+  "description": "Particle life using JS!",
   "main": "index.js",
   "scripts": {
     "start": "lite-server"
   },
   "keywords": [],
-  "author": "",
+  "author": "hxst1, jlm109-ua",
   "license": "ISC",
   "devDependencies": {
     "lite-server": "^2.6.1"
