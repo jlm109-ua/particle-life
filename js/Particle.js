@@ -1,16 +1,7 @@
 /**
  * @class Particle: Particles are the basic building blocks of the simulation. They have a position, velocity and type.
  */
-class Particle {
-    /**
-     * @constructor Creates a particle with a random position, velocity and color (type). 
-     */
-    constructor() {
-        this.position = new Vector2D(Math.random() * canvas.width, Math.random() * canvas.height);
-        this.velocity = new Vector2D(Math.random() * 2 - 1, Math.random() * 2 - 1);
-        this.color = Math.floor(Math.random() * 3);
-    }
-
+export default class Particle {
     /**
      * @constructor Creates a particle with a random position, velocity and a given color (type).
      * @param {*} color 

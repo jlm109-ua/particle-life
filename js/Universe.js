@@ -7,7 +7,8 @@ class Universe {
      * @param {*} width 
      * @param {*} height 
      */
-    constructor(width, height) {
+    constructor(p, width, height) {
+        this.p = p;
         this.width = width;
         this.height = height;
         this.particles = []; // An array to store the particles, initially empty.
@@ -16,25 +17,25 @@ class Universe {
     /**
      * @method setup Sets up the canvas.
      */
-    setup(/* add parameters like N_PARTICLES from index to fill the particles array */) {
-        createCanvas(this.width, this.height);
-        background(0);
-
-        // TODO: Add particles to the universe
+    setup() {
+        this.p.createCanvas(this.width, this.height);
+        this.p.background(0);
     }
 
-    /**
-     * @method addParticle Adds the given particle to the universe.
-     */
-    addParticle(particle) {
-        this.particles.push(particle);
+    resize(newWidth, newHeight) {
+        this.width = newWidth;
+        this.height = newHeight;
+        this.p.resizeCanvas(this.width, this.height); // Redimensiona el canvas
+        this.p.background(0); // Restablece el fondo después del cambio de tamaño
     }
 
     update() {
+        // Lógica de actualización de partículas
     }
 
     render() {
-        background(0);
+        this.p.background(0); // Fondo oscuro en cada renderizado
+        // Renderizado de partículas si es necesario
     }
 }
 
