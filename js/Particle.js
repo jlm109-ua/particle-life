@@ -22,9 +22,11 @@ export default class Particle {
     update() {
         this.position.add(this.velocity); // Move the particle by adding its velocity to its position
 
-        // Make the particle bounce off the edges
-        if (this.position.x < 0 || this.position.x > this.p.width) this.velocity.x *= -1;
-        if (this.position.y < 0 || this.position.y > this.p.height) this.velocity.y *= -1;
+        // The particle space will be a wrap-around space
+        if (this.position.x < 0) this.position.x = this.p.width;
+        if (this.position.x > this.p.width) this.position.x = 0;
+        if (this.position.y < 0) this.position.y = this.p.height;
+        if (this.position.y > this.p.height) this.position.y = 0;
     }
 
     /**

@@ -68,7 +68,18 @@ export default class Universe {
             this.updateParticles();
         }
 
-        // TODO: add more ifs for the settings
+        // Check if the background color has changed
+        if (this.bgColor !== Settings.bgColor) {
+            this.bgColor = Settings.bgColor;
+            this.p.background(this.bgColor); // Update the background color
+        }
+
+        // Check if the speed range has changed
+        if (Settings.minSpeed !== Particle.minSpeed || Settings.maxSpeed !== Particle.maxSpeed) {
+            this.particles.forEach(particle => {
+                particle.velocity = this.p.createVector(this.p.random(Settings.minSpeed, Settings.maxSpeed), this.p.random(Settings.minSpeed, Settings.maxSpeed));
+            });
+        }
 
         this.particles.forEach(particle => particle.update()); // Update each particle's position
     }
