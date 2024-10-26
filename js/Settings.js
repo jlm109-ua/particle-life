@@ -14,7 +14,7 @@ export default class Settings {
     static maxSpeed = 1;
     static interactionMatrix = Array.from(
         { length: Settings.N_COLORS },
-        () => Array(Settings.N_COLORS).fill(Math.random(-1, 1))
+        () => Array(Settings.N_COLORS).fill(0)
     );
 
     // Canvas settings
@@ -139,10 +139,10 @@ export default class Settings {
                     <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[i]};"></span>
                     -
                     <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[j]};"></span>
-                    <input type="range" min="-5" max="5" step="0.1" value="0" 
+                    <input type="range" min="-1" max="1" step="0.1" value="0" 
                            data-colorA="${i}" data-colorB="${j}"
                            oninput="this.nextElementSibling.textContent = this.value">
-                    <span>0</span> <!-- Mostrará el valor actual del rango -->
+                    <span class="range-value">${Settings.interactionMatrix[i][j].toFixed(2)}</span>
                 `;
                 settingsDiv.querySelector("#interactionSettings").appendChild(interactionDiv);
             }
@@ -153,6 +153,10 @@ export default class Settings {
                 const colorA = parseInt(e.target.getAttribute("data-colorA"), 10);
                 const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
                 const force = parseFloat(e.target.value);
+
+                const spanValue = e.target.nextElementSibling;
+                spanValue.textContent = force.toFixed(2);
+
                 Settings.setInteraction(colorA, colorB, force);
             });
         });
