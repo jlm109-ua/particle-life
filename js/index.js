@@ -1,33 +1,29 @@
 import Universe from './Universe.js';
-import Particle from './Particle.js';
 
-let universe; // The universe in which the particles will move.
-const N_PARTICLES = 100; // The number of particles to create
-const N_COLORS = 6; // The number of colors to use
-const colors = 360 / N_COLORS;
-const bgColor = '#111'; // The background color of the canvas
+let universe; // The universe instance where all particles will be held
+const bgColor = '#111'; // Background color for the canvas
 
 new p5((p) => {
     /**
-     * @method setup Sets up the canvas.
+     * @method setup - Initializes the canvas and the universe.
      */
     p.setup = () => {
-        universe = new Universe(p, p.windowWidth, p.windowHeight, bgColor);
-        universe.setup();
+        universe = new Universe(p, p.windowWidth, p.windowHeight, bgColor); // Create the universe with window size and background color
+        universe.setup(); // Call the setup method of the universe to configure the canvas
     };
 
     /**
-     * @method draw Draws the canvas.
+     * @method draw - Runs every frame, updating and rendering the universe.
      */
     p.draw = () => {
-        universe.update();
-        universe.render();
+        universe.update(); // Update the particles' positions in the universe
+        universe.render(); // Render the universe and draw particles on the canvas
     };
 
     /**
-     * @method windowResized Resizes the canvas when the window is resized.
+     * @method windowResized - Resizes the canvas when the window size changes.
      */
     p.windowResized = () => {
-        universe.resize(p.windowWidth, p.windowHeight, bgColor); // Ajusta el tamaño del canvas
+        universe.resize(p.windowWidth, p.windowHeight); // Adjust the canvas size to the new window dimensions
     };
 });
