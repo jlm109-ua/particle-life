@@ -6,6 +6,8 @@ export default class Settings {
     static N_PARTICLES = 100;
 
     // Particle settings
+    static N_COLORS = 6;
+    //static colors = 360 / Settings.N_COLORS;
     static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
     static N_COLORS = this.colors.length;
     static minSpeed = -1;

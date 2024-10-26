@@ -24,21 +24,21 @@ export default class Universe {
      * @method updateParticles - Updates the particles in the universe.
      */
     updateParticles() {
-        this.particles = []; // Clear the particles array
+        this.particles = [];
         for (let i = 0; i < Settings.N_PARTICLES; i++) {
-            let randomColor = Math.floor(Math.random() * Settings.colors.length);
-            console.log(randomColor);
-            const color = this.p.color(Settings.colors[randomColor]) // Create a color in RGB mode
-            console.log(color);
+            const colorHue = this.p.random(0, 360); // Color aleatorio en el rango HSB
+            const color = this.p.color(colorHue, 100, 100); // Genera el color en HSB
             const particle = new Particle(this.p, color);
             this.particles.push(particle);
         }
     }
 
+
     /**
      * @method setup - Sets up the canvas and creates particles.
      */
     setup() {
+        this.p.colorMode(this.p.HSB, 360, 100, 100);
         this.p.createCanvas(this.width, this.height); // Create the canvas with specified dimensions
         this.p.background(this.bgColor); // Set the background color
         this.updateParticles(); // Create particles in the universe
@@ -72,8 +72,8 @@ export default class Universe {
         this.particles.forEach((particleA, i) => {
             this.particles.forEach((particleB, j) => {
                 if (i !== j) {
-                    const colorIndexA = Math.floor(this.p.hue(particleA.color) / Settings.colors);
-                    const colorIndexB = Math.floor(this.p.hue(particleB.color) / Settings.colors);
+                    const colorIndexA = Math.floor(this.p.hue(particleA.color) / (360 / Settings.N_COLORS));
+                    const colorIndexB = Math.floor(this.p.hue(particleB.color) / (360 / Settings.N_COLORS));
 
                     const forceMagnitude = Settings.interactionMatrix[colorIndexA][colorIndexB];
 
