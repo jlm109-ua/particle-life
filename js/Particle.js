@@ -1,3 +1,5 @@
+import Settings from './Settings.js';
+
 /**
  * @class Particle: Particles are the basic building blocks of the simulation. They have a position, velocity and type.
  */
@@ -8,7 +10,7 @@ export default class Particle {
      */
     constructor(color) {
         this.position = new Vector2D(Math.random() * canvas.width, Math.random() * canvas.height);
-        this.velocity = new Vector2D(Math.random() * 2 - 1, Math.random() * 2 - 1);
+        this.velocity = new Vector2D(Math.random(Settings.minSpeed, Settings.maxSpeed), Math.random(Settings.minSpeed, Settings.maxSpeed)); // Random velocity between -1 and 1: x would be between -1 and 1, y would be between -1 and 1
         this.color = color;
     }
 
