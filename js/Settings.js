@@ -6,8 +6,9 @@ export default class Settings {
     static N_PARTICLES = 100;
 
     // Particle settings
-    static N_COLORS = 6;
-    static colors = 360 / Settings.N_COLORS;
+    //static N_COLORS = 6;
+    //static colors = 360 / Settings.N_COLORS;
+    static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
     static minSpeed = -1;
     static maxSpeed = 1;
 
@@ -25,15 +26,6 @@ export default class Settings {
     }
 
     /* PARTICLE SETTERS */
-
-    /**
-     * @method setNColors Sets the number of colors in the simulation.
-     * @param {*} nColors 
-     */
-    static setNColors(nColors) {
-        Settings.N_COLORS = nColors;
-        Settings.colors = 360 / Settings.N_COLORS;
-    }
 
     /**
      * @method setMinSpeed Sets the minimum speed of the particles.
@@ -86,9 +78,10 @@ export default class Settings {
             <label>Particles: 
                 <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="1">
             </label>
-            <label>Colors: 
-                <input type="number" id="nColors" value="${Settings.N_COLORS}" min="1">
-            </label>
+            <label>Colors:
+                <div id="colors">
+                    ${Settings.colors.map((color, i) => `<div style="background-color: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
+                </div>
             <label>Min Speed: 
                 <input type="number" id="minSpeed" step="0.1" value="${Settings.minSpeed}">
             </label>
@@ -106,9 +99,6 @@ export default class Settings {
         // Attach event listeners for real-time settings updates
         document.getElementById("nParticles").addEventListener("input", (e) => {
             Settings.setNParticles(parseInt(e.target.value, 10));
-        });
-        document.getElementById("nColors").addEventListener("input", (e) => {
-            Settings.setNColors(parseInt(e.target.value, 10));
         });
         document.getElementById("minSpeed").addEventListener("input", (e) => {
             Settings.setMinSpeed(parseFloat(e.target.value));

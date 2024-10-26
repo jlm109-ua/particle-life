@@ -26,7 +26,10 @@ export default class Universe {
     updateParticles() {
         this.particles = []; // Clear the particles array
         for (let i = 0; i < Settings.N_PARTICLES; i++) {
-            const color = this.p.color(this.p.random(360), 100, 100);
+            let randomColor = Math.floor(Math.random() * Settings.colors.length);
+            console.log(randomColor);
+            const color = this.p.color(Settings.colors[randomColor]) // Create a color in RGB mode
+            console.log(color);
             const particle = new Particle(this.p, color);
             this.particles.push(particle);
         }
@@ -38,13 +41,7 @@ export default class Universe {
     setup() {
         this.p.createCanvas(this.width, this.height); // Create the canvas with specified dimensions
         this.p.background(this.bgColor); // Set the background color
-
-        // Generate particles with random colors
-        for (let i = 0; i < 100; i++) {
-            const color = this.p.color(this.p.random(360), 100, 100); // Generate a random color in HSB mode
-            const particle = new Particle(this.p, color); // Create a new particle
-            this.particles.push(particle); // Add the particle to the particles array
-        }
+        this.updateParticles(); // Create particles in the universe
     }
 
     /**
