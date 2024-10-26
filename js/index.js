@@ -8,6 +8,7 @@ new p5((p) => {
      * @method setup - Initializes the canvas and the universe.
      */
     p.setup = () => {
+        Settings.render();
         universe = new Universe(p, p.windowWidth, p.windowHeight, Settings.bgColor); // Create the universe with window size and background color
         universe.setup(); // Call the setup method of the universe to configure the canvas
     };

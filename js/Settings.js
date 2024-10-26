@@ -60,4 +60,64 @@ export default class Settings {
     static setBgColor(bgColor) {
         Settings.bgColor = bgColor;
     }
+
+    /* METHODS */
+    /** 
+     * @method render - Renders the settings window on the canvas as a web component.
+     */
+    static render() {
+        const settingsDiv = document.createElement("div");
+        settingsDiv.id = "settings-menu";
+        settingsDiv.style = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 8px;
+            width: 200px;
+            font-family: Arial, sans-serif;
+            z-index: 10;
+        `;
+
+        settingsDiv.innerHTML = `
+            <h3>Settings</h3>
+            <label>Particles: 
+                <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="1">
+            </label>
+            <label>Colors: 
+                <input type="number" id="nColors" value="${Settings.N_COLORS}" min="1">
+            </label>
+            <label>Min Speed: 
+                <input type="number" id="minSpeed" step="0.1" value="${Settings.minSpeed}">
+            </label>
+            <label>Max Speed: 
+                <input type="number" id="maxSpeed" step="0.1" value="${Settings.maxSpeed}">
+            </label>
+            <label>Background Color: 
+                <input type="color" id="bgColor" value="${Settings.bgColor}">
+            </label>
+        `;
+
+        // Append settingsDiv to the body
+        document.body.appendChild(settingsDiv);
+
+        // Attach event listeners for real-time settings updates
+        document.getElementById("nParticles").addEventListener("input", (e) => {
+            Settings.setNParticles(parseInt(e.target.value, 10));
+        });
+        document.getElementById("nColors").addEventListener("input", (e) => {
+            Settings.setNColors(parseInt(e.target.value, 10));
+        });
+        document.getElementById("minSpeed").addEventListener("input", (e) => {
+            Settings.setMinSpeed(parseFloat(e.target.value));
+        });
+        document.getElementById("maxSpeed").addEventListener("input", (e) => {
+            Settings.setMaxSpeed(parseFloat(e.target.value));
+        });
+        document.getElementById("bgColor").addEventListener("input", (e) => {
+            Settings.setBgColor(e.target.value);
+        });
+    }
 }
