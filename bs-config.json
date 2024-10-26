@@ -1,0 +1,10 @@
+{
+    "server": {
+        "baseDir": "./"
+    },
+    "files": ["./*.html", "./css/*.css", "./js/*.js"],
+    "browser": "default",
+    "notify": false,
+    "open": true,
+    "port": 3000
+}
