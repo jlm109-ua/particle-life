@@ -6,15 +6,15 @@ export default class Settings {
     static N_PARTICLES = 100;
 
     // Particle settings
-    //static N_COLORS = 6;
-    //static colors = 360 / Settings.N_COLORS;
     static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    static N_COLORS = this.colors.length;
     static minSpeed = -1;
     static maxSpeed = 1;
     static interactionMatrix = Array.from(
         { length: Settings.N_COLORS },
-        () => Array(Settings.N_COLORS).fill(0)
+        () => Array(Settings.N_COLORS).fill(Math.random(-1, 1))
     );
+
     // Canvas settings
     static bgColor = '#111111';
 
@@ -73,13 +73,34 @@ export default class Settings {
             top: 10px;
             right: 10px;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             border-radius: 8px;
-            width: 200px;
+            width: 300px;
             font-family: Arial, sans-serif;
             z-index: 10;
+            display: none; /* Initially hidden for dropdown */
         `;
+
+        // Dropdown toggle button
+        const toggleButton = document.createElement("button");
+        toggleButton.textContent = "Settings";
+        toggleButton.style = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(50, 50, 50, 0.9);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            z-index: 11;
+        `;
+        toggleButton.onclick = () => {
+            settingsDiv.style.display = settingsDiv.style.display === "none" ? "block" : "none";
+        };
 
         settingsDiv.innerHTML = `
             <h3>Settings</h3>
@@ -105,17 +126,21 @@ export default class Settings {
             </label>
         `;
 
-        // Append settingsDiv to the body
+        // Append toggle button and settingsDiv to the body
+        document.body.appendChild(toggleButton);
         document.body.appendChild(settingsDiv);
 
         for (let i = 0; i < Settings.N_COLORS; i++) {
             for (let j = i + 1; j < Settings.N_COLORS; j++) {
                 const interactionDiv = document.createElement("div");
                 interactionDiv.innerHTML = `
-                    <label>Interaction (${i + 1}-${j + 1}): 
-                        <input type="range" min="-5" max="5" step="0.1" value="0" 
-                               data-colorA="${i}" data-colorB="${j}">
-                    </label>
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[i]};"></span>
+                    -
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[j]};"></span>
+                    <input type="range" min="-5" max="5" step="0.1" value="0" 
+                           data-colorA="${i}" data-colorB="${j}"
+                           oninput="this.nextElementSibling.textContent = this.value">
+                    <span>0</span> <!-- Mostrará el valor actual del rango -->
                 `;
                 settingsDiv.querySelector("#interactionSettings").appendChild(interactionDiv);
             }
