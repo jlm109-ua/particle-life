@@ -60,26 +60,38 @@ export default class Universe {
      * @method update - Updates all particles in the universe.
      */
     update() {
-        // Check if the number of particles has changed
         if (this.particles.length !== Settings.N_PARTICLES) {
             this.updateParticles();
         }
 
-        // Check if the background color has changed
         if (this.bgColor !== Settings.bgColor) {
             this.bgColor = Settings.bgColor;
-            this.p.background(this.bgColor); // Update the background color
+            this.p.background(this.bgColor);
         }
 
-        // Check if the speed range has changed
-        if (Settings.minSpeed !== Particle.minSpeed || Settings.maxSpeed !== Particle.maxSpeed) {
-            this.particles.forEach(particle => {
-                particle.velocity = this.p.createVector(this.p.random(Settings.minSpeed, Settings.maxSpeed), this.p.random(Settings.minSpeed, Settings.maxSpeed));
+        this.particles.forEach((particleA, i) => {
+            this.particles.forEach((particleB, j) => {
+                if (i !== j) {
+                    const colorIndexA = Math.floor(this.p.hue(particleA.color) / Settings.colors);
+                    const colorIndexB = Math.floor(this.p.hue(particleB.color) / Settings.colors);
+
+                    const forceMagnitude = Settings.interactionMatrix[colorIndexA][colorIndexB];
+
+                    const distance = this.p.dist(particleA.position.x, particleA.position.y, particleB.position.x, particleB.position.y);
+                    if (distance > 0) {
+                        const force = this.p.createVector(
+                            (particleB.position.x - particleA.position.x) / distance,
+                            (particleB.position.y - particleA.position.y) / distance
+                        ).mult(forceMagnitude / distance);
+
+                        particleA.velocity.add(force);
+                    }
+                }
             });
-        }
-
-        this.particles.forEach(particle => particle.update()); // Update each particle's position
+            particleA.update();
+        });
     }
+
 
     /**
      * @method render - Renders the universe and all particles.

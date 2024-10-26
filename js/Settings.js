@@ -11,9 +11,12 @@ export default class Settings {
     static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
     static minSpeed = -1;
     static maxSpeed = 1;
-
+    static interactionMatrix = Array.from(
+        { length: Settings.N_COLORS },
+        () => Array(Settings.N_COLORS).fill(0)
+    );
     // Canvas settings
-    static bgColor = '#111';
+    static bgColor = '#111111';
 
     /* UNIVERSE SETTERS */
 
@@ -53,6 +56,11 @@ export default class Settings {
         Settings.bgColor = bgColor;
     }
 
+    static setInteraction(colorA, colorB, force) {
+        Settings.interactionMatrix[colorA][colorB] = force;
+        Settings.interactionMatrix[colorB][colorA] = force;
+    }
+
     /* METHODS */
     /** 
      * @method render - Renders the settings window on the canvas as a web component.
@@ -82,6 +90,10 @@ export default class Settings {
                 <div id="colors">
                     ${Settings.colors.map((color, i) => `<div style="background-color: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
                 </div>
+            </label>
+            <div id="interactionSettings">
+                <h4>Interactions</h4>
+            </div>
             <label>Min Speed: 
                 <input type="number" id="minSpeed" step="0.1" value="${Settings.minSpeed}">
             </label>
@@ -95,6 +107,28 @@ export default class Settings {
 
         // Append settingsDiv to the body
         document.body.appendChild(settingsDiv);
+
+        for (let i = 0; i < Settings.N_COLORS; i++) {
+            for (let j = i + 1; j < Settings.N_COLORS; j++) {
+                const interactionDiv = document.createElement("div");
+                interactionDiv.innerHTML = `
+                    <label>Interaction (${i + 1}-${j + 1}): 
+                        <input type="range" min="-5" max="5" step="0.1" value="0" 
+                               data-colorA="${i}" data-colorB="${j}">
+                    </label>
+                `;
+                settingsDiv.querySelector("#interactionSettings").appendChild(interactionDiv);
+            }
+        }
+
+        settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
+            slider.addEventListener("input", (e) => {
+                const colorA = parseInt(e.target.getAttribute("data-colorA"), 10);
+                const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
+                const force = parseFloat(e.target.value);
+                Settings.setInteraction(colorA, colorB, force);
+            });
+        });
 
         // Attach event listeners for real-time settings updates
         document.getElementById("nParticles").addEventListener("input", (e) => {
