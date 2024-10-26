@@ -1,7 +1,7 @@
 /**
  * @class Universe: A class that represents the universe in which the particles will move.
  */
-class Universe {
+export default class Universe {
     /**
      * @constructor Creates a universe with a given width and height.
      * @param {*} width 
@@ -11,7 +11,7 @@ class Universe {
         this.p = p;
         this.width = width;
         this.height = height;
-        this.particles = []; // An array to store the particles, initially empty.
+        this.particles = [];
     }
 
     /**
@@ -22,21 +22,22 @@ class Universe {
         this.p.background(0);
     }
 
+    /**
+     *
+     * @param newWidth
+     * @param newHeight
+     */
     resize(newWidth, newHeight) {
         this.width = newWidth;
         this.height = newHeight;
-        this.p.resizeCanvas(this.width, this.height); // Redimensiona el canvas
-        this.p.background(0); // Restablece el fondo después del cambio de tamaño
+        this.p.resizeCanvas(this.width, this.height);
+        this.p.background(0);
     }
 
     update() {
-        // Lógica de actualización de partículas
     }
 
     render() {
-        this.p.background(0); // Fondo oscuro en cada renderizado
-        // Renderizado de partículas si es necesario
+        this.p.background(0);
     }
 }
-
-export default Universe;
