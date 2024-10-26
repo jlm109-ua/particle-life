@@ -3,13 +3,12 @@ import Particle from './Particle.js';
 import Settings from './Settings.js';
 
 let universe; // The universe in which the particles will move.
-
 new p5((p) => {
     /**
      * @method setup - Initializes the canvas and the universe.
      */
     p.setup = () => {
-        universe = new Universe(p, p.windowWidth, p.windowHeight, bgColor); // Create the universe with window size and background color
+        universe = new Universe(p, p.windowWidth, p.windowHeight, Settings.bgColor); // Create the universe with window size and background color
         universe.setup(); // Call the setup method of the universe to configure the canvas
     };
 

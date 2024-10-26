@@ -1,7 +1,7 @@
 /**
  * @class Settings: A class that contains the settings of the simulation.
  */
-class Settings {
+export default class Settings {
     // Universe settings
     static N_PARTICLES = 100;
 
