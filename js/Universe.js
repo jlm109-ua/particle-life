@@ -1,4 +1,5 @@
 import Particle from './Particle.js';
+import Settings from './Settings.js';
 
 /**
  * @class Universe - Represents the universe where particles move.
@@ -17,6 +18,18 @@ export default class Universe {
         this.height = height; // Canvas height
         this.bgColor = bgColor; // Canvas background color
         this.particles = []; // Array to hold all particles in the universe
+    }
+
+    /**
+     * @method updateParticles - Updates the particles in the universe.
+     */
+    updateParticles() {
+        this.particles = []; // Clear the particles array
+        for (let i = 0; i < Settings.N_PARTICLES; i++) {
+            const color = this.p.color(this.p.random(360), 100, 100);
+            const particle = new Particle(this.p, color);
+            this.particles.push(particle);
+        }
     }
 
     /**
@@ -50,6 +63,13 @@ export default class Universe {
      * @method update - Updates all particles in the universe.
      */
     update() {
+        // Check if the number of particles has changed
+        if (this.particles.length !== Settings.N_PARTICLES) {
+            this.updateParticles();
+        }
+
+        // TODO: add more ifs for the settings
+
         this.particles.forEach(particle => particle.update()); // Update each particle's position
     }
 
