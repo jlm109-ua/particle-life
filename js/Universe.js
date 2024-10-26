@@ -7,10 +7,11 @@ export default class Universe {
      * @param {*} width 
      * @param {*} height 
      */
-    constructor(p, width, height) {
+    constructor(p, width, height, bgColor) {
         this.p = p;
         this.width = width;
         this.height = height;
+        this.bgColor = bgColor;
         this.particles = [];
     }
 
@@ -19,7 +20,7 @@ export default class Universe {
      */
     setup() {
         this.p.createCanvas(this.width, this.height);
-        this.p.background(0);
+        this.p.background(this.bgColor);
     }
 
     /**
@@ -31,13 +32,13 @@ export default class Universe {
         this.width = newWidth;
         this.height = newHeight;
         this.p.resizeCanvas(this.width, this.height);
-        this.p.background(0);
+        this.p.background(this.bgColor);
     }
 
     update() {
     }
 
     render() {
-        this.p.background(0);
+        this.p.background(this.bgColor);
     }
 }
