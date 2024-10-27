@@ -60,13 +60,21 @@ export default class Universe {
      * @method update - Updates all particles in the universe.
      */
     update() {
+        // Check if the number of particles has changed
         if (this.particles.length !== Settings.N_PARTICLES) {
             this.updateParticles();
         }
 
+        // Check if the background color has changed
         if (this.bgColor !== Settings.bgColor) {
             this.bgColor = Settings.bgColor;
             this.p.background(this.bgColor);
+        }
+
+        if (Settings.SPEED_CONSTANT !== 1) {
+            this.particles.forEach((particle) => {
+                particle.update();
+            })
         }
 
         this.particles.forEach((particleA, i) => {

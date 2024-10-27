@@ -7,6 +7,7 @@ export default class Settings {
     static N_COLORS = this.colors.length;
     static minSpeed = -1;
     static maxSpeed = 1;
+    static SPEED_CONSTANT = 1;
     static interactionMatrix = Array.from(
         { length: Settings.N_COLORS },
         () => Array(Settings.N_COLORS).fill(0)
@@ -19,14 +20,15 @@ export default class Settings {
     static setNParticles(nParticles) { Settings.N_PARTICLES = nParticles; }
     static setMinSpeed(minSpeed) { Settings.minSpeed = minSpeed; }
     static setMaxSpeed(maxSpeed) { Settings.maxSpeed = maxSpeed; }
+    static setSpeedConstant(speedConstant) { Settings.SPEED_CONSTANT = speedConstant; }
     static setBgColor(bgColor) { Settings.bgColor = bgColor; }
     static setInteraction(colorA, colorB, force) {
         Settings.interactionMatrix[colorA][colorB] = force;
-        Settings.interactionMatrix[colorB][colorA] = force;
     }
 
     /* METHODS */
     static render() {
+        // Settings button
         const settingsDiv = document.createElement("div");
         settingsDiv.id = "settings-menu";
         settingsDiv.style = `
@@ -62,12 +64,12 @@ export default class Settings {
         `;
         settingsButton.textContent = "Settings ▼";
 
-        // Toggle visibility on click
-        let isVisible = false;
+        // Toggle settings button visibility on click
+        let isSettingsButtonVisible = false;
         settingsButton.onclick = () => {
-            isVisible = !isVisible;
-            settingsDiv.style.display = isVisible ? "block" : "none";
-            settingsButton.textContent = isVisible ? "Settings ▲" : "Settings ▼";
+            isSettingsButtonVisible = !isSettingsButtonVisible;
+            settingsDiv.style.display = isSettingsButtonVisible ? "block" : "none";
+            settingsButton.textContent = isSettingsButtonVisible ? "Settings ▲" : "Settings ▼";
         };
 
         // Settings inner content
@@ -80,10 +82,11 @@ export default class Settings {
             <h4>Particles:
                 <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="0" style="width: 50%">
             </h4>
-            <div id="interactionSettings" style="margin-top: 4px">
-                <h4>Interactions</h4>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px;">
+                <h4>
+                    Speed:
+                    <input type="number" id="speedConstant" step="0.01" value=${Settings.SPEED_CONSTANT}" style="width: 100%">
+                </h4>
                 <h4>
                     Min Speed:
                     <input type="number" id="minSpeed" step="0.01" value="${Settings.minSpeed}" style="width: 100%;">
@@ -98,26 +101,90 @@ export default class Settings {
             </h4>
         `;
 
+        // Interactions button
+        const interactionsDiv = document.createElement("div");
+
+        interactionsDiv.id = "interactions-menu";
+        interactionsDiv.style = `
+            position: absolute;
+            top: 10px;
+            right: 250px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 8px;
+            width: 500px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            z-index: 10;
+            display: none;
+            margin-top: 4px;
+        `;
+
+        // "Interactions" button to toggle interactions sliders visibility
+        const interactionsButton = document.createElement("div");
+        interactionsButton.style = `
+            position: absolute;
+            top: 10px;
+            right: 250px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            z-index: 20;
+        `;
+        interactionsButton.textContent = "Interactions ▼"
+
+        // Toggle interactions button visibility on click
+        let isInteractionsButtonVisible = false;
+        interactionsButton.onclick = () => {
+            isInteractionsButtonVisible = !isInteractionsButtonVisible;
+            interactionsDiv.style.display = isInteractionsButtonVisible ? "block" : "none";
+            interactionsButton.textContent = isInteractionsButtonVisible ? "Interactions ▲" : "Interactions ▼";
+        };
+
+        // Interactions inner content
+        interactionsDiv.innerHTML = `
+    <div id="interactionSettings" style="margin-top: 4px">
+        <h4>Interactions</h4>
+        <div id="interactionColumns" style="display: flex; flex-wrap: wrap;">
+            <div class="column" style="flex: 1; padding: 10px;"></div>
+            <div class="column" style="flex: 1; padding: 10px;"></div>
+        </div>
+    </div>
+`;
+
+        // Selecciona el elemento interactionColumns
+        const interactionColumns = interactionsDiv.querySelectorAll("#interactionColumns .column");
+
         // Append interaction sliders
         for (let i = 0; i < Settings.N_COLORS; i++) {
-            for (let j = i + 1; j < Settings.N_COLORS; j++) {
+            for (let j = 0; j < Settings.N_COLORS; j++) {
                 const interactionDiv = document.createElement("div");
                 interactionDiv.innerHTML = `
-                    <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[i]};"></span>
-                    to
-                    <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[j]};"></span>
-                    <input type="range" min="-1" max="1" step="0.01" value="0" style="width: 60%;"
-                           data-colorA="${i}" data-colorB="${j}"
-                           oninput="this.nextElementSibling.textContent = this.value">
-                    <span class="range-value">${Settings.interactionMatrix[i][j].toFixed(2)}</span>
-                `;
-                settingsDiv.querySelector("#interactionSettings").appendChild(interactionDiv);
+            <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[i]};"></span>
+            to
+            <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[j]};"></span>
+            <input type="range" min="-1" max="1" step="0.01" value="0" style="width: 60%;"
+                data-colorA="${i}" data-colorB="${j}"
+                oninput="this.nextElementSibling.textContent = this.value">
+            <span class="range-value">${Settings.interactionMatrix[i][j].toFixed(2)}</span>
+        `;
+                // Alterna entre las dos columnas
+                interactionColumns[(i + j) % 2].appendChild(interactionDiv);
             }
         }
 
-        // Append button and content to body
+        // Append settings button to body
         document.body.appendChild(settingsButton);
         document.body.appendChild(settingsDiv);
+
+        // Append interactions button and content to body
+        document.body.appendChild(interactionsButton);
+        document.body.appendChild(interactionsDiv);
 
         // Event listeners for settings changes
         settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
@@ -137,6 +204,10 @@ export default class Settings {
             Settings.setNParticles(parseInt(e.target.value, 10));
             console.log("Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
         });
+        document.getElementById("speedConstant").addEventListener("input", (e) => {
+            Settings.setSpeedConstant(parseFloat(e.target.value));
+            console.log("Settings changed - Settings.SPEED_CONSTANT = " + Settings.SPEED_CONSTANT);
+        });
         document.getElementById("minSpeed").addEventListener("input", (e) => {
             Settings.setMinSpeed(parseFloat(e.target.value));
             console.log("Settings changed - Settings.minSpeed = " + Settings.minSpeed);
@@ -151,40 +222,3 @@ export default class Settings {
         });
     }
 }
-
-// Llama a Settings.render() después de cargar el DOM
-document.addEventListener("DOMContentLoaded", () => {
-    // Append button and content to body
-    document.body.appendChild(settingsButton);
-    document.body.appendChild(settingsDiv);
-
-    // Event listeners for settings changes
-    settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
-        slider.addEventListener("input", (e) => {
-            const colorA = parseInt(e.target.getAttribute("data-colorA"), 10);
-            const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
-            const force = parseFloat(e.target.value);
-
-            const spanValue = e.target.nextElementSibling;
-            spanValue.textContent = force.toFixed(2);
-
-            Settings.setInteraction(colorA, colorB, force);
-        });
-    });
-    document.getElementById("nParticles").addEventListener("input", (e) => {
-        Settings.setNParticles(parseInt(e.target.value, 10));
-        console.log("DOMContentLoaded - Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
-    });
-    document.getElementById("minSpeed").addEventListener("input", (e) => {
-        Settings.setMinSpeed(parseFloat(e.target.value));
-        console.log("DOMContentLoaded - Settings changed - Settings.minSpeed = " + Settings.minSpeed);
-    });
-    document.getElementById("maxSpeed").addEventListener("input", (e) => {
-        Settings.setMaxSpeed(parseFloat(e.target.value));
-        console.log("DOMContentLoaded - Settings changed - Settings.maxSpeed = " + Settings.maxSpeed);
-    });
-    document.getElementById("bgColor").addEventListener("input", (e) => {
-        Settings.setBgColor(e.target.value);
-        console.log("DOMContentLoaded - Settings changed - Settings.bgColor = " + Settings.bgColor);
-    });
-});

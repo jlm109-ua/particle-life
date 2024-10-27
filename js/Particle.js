@@ -11,8 +11,11 @@ export default class Particle {
      */
     constructor(p, color) {
         this.p = p; // Store the p5 instance for accessing p5 functions
+        this.xSpeed = this.p.random(Settings.minSpeed, Settings.maxSpeed); // Save the x speed
+        this.ySpeed = this.p.random(Settings.minSpeed, Settings.maxSpeed); // Save the y speed
+        this.maxSpeed = Settings.maxSpeed; // Maximum speed for the particle
         this.position = this.p.createVector(this.p.random(this.p.width), this.p.random(this.p.height)); // Random starting position within the canvas
-        this.velocity = this.p.createVector(this.p.random(Settings.minSpeed, Settings.maxSpeed), this.p.random(Settings.minSpeed, Settings.maxSpeed)); // Random initial velocity between minSpeed and maxSpeed
+        this.velocity = this.p.createVector(this.xSpeed, this.ySpeed); // Random initial velocity between minSpeed and maxSpeed
         this.color = color; // Set the particle's color
     }
 
@@ -20,6 +23,8 @@ export default class Particle {
      * @method update - Updates the particle's position based on its velocity.
      */
     update() {
+        // DEBUG: console.log("Particle - Updating velocity from (" + this.xSpeed + "," + this.ySpeed + ") to (" + this.xSpeed * Settings.SPEED_CONSTANT + "," + this.ySpeed * Settings.SPEED_CONSTANT + ")");
+        this.velocity = this.p.createVector(this.xSpeed * Settings.SPEED_CONSTANT, this.ySpeed * Settings.SPEED_CONSTANT); // Update the velocity vector
         this.position.add(this.velocity); // Move the particle by adding its velocity to its position
 
         // The particle space will be a wrap-around space
