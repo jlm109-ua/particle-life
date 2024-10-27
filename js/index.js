@@ -3,6 +3,7 @@ import Particle from './Particle.js';
 import Settings from './Settings.js';
 
 let universe; // The universe in which the particles will move.
+
 new p5((p) => {
     /**
      * @method setup - Initializes the canvas and the universe.
