@@ -1,6 +1,3 @@
-/**
- * @class Settings: A class that contains the settings of the simulation.
- */
 export default class Settings {
     // Universe settings
     static N_PARTICLES = 100;
@@ -36,59 +33,69 @@ export default class Settings {
             position: absolute;
             top: 10px;
             right: 10px;
-            padding: 20px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
             border-radius: 8px;
-            width: 300px;
+            width: 250px;
             font-family: Arial, sans-serif;
+            font-size: 12px;
             z-index: 10;
-            display: none; /* Initially hidden for collapsible */
+            display: none;
+            margin-top: 4px;
         `;
 
-        // Header with collapsible icon
-        const header = document.createElement("div");
-        header.style = `
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 18px;
+        // "Settings" button to toggle menu visibility
+        const settingsButton = document.createElement("div");
+        settingsButton.style = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.7);
             color: white;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            z-index: 20;
         `;
-        const arrowIcon = document.createElement("span");
-        arrowIcon.textContent = "▼";
-        arrowIcon.style = `margin-right: 8px; transition: transform 0.3s ease;`;
-        header.appendChild(arrowIcon);
-        header.appendChild(document.createTextNode("Settings"));
+        settingsButton.textContent = "Settings ▼";
 
-        header.onclick = () => {
-            const isVisible = settingsDiv.style.display === "block";
-            settingsDiv.style.display = isVisible ? "none" : "block";
-            arrowIcon.textContent = isVisible ? "▼" : "▲";
+        // Toggle visibility on click
+        let isVisible = false;
+        settingsButton.onclick = () => {
+            isVisible = !isVisible;
+            settingsDiv.style.display = isVisible ? "block" : "none";
+            settingsButton.textContent = isVisible ? "Settings ▲" : "Settings ▼";
         };
 
         // Settings inner content
         settingsDiv.innerHTML = `
-            <label>Particles: 
-                <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="1">
-            </label>
-            <label>Colors:
-                <div id="colors">
+            <h4>Colors
+                <div id="colors" style="margin-top: 4px">
                     ${Settings.colors.map((color) => `<div style="background-color: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
                 </div>
-            </label>
-            <div id="interactionSettings">
+            </h4>
+            <h4>Particles:
+                <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="0" style="width: 50%">
+            </h4>
+            <div id="interactionSettings" style="margin-top: 4px">
                 <h4>Interactions</h4>
             </div>
-            <label>Min Speed: 
-                <input type="number" id="minSpeed" step="0.1" value="${Settings.minSpeed}">
-            </label>
-            <label>Max Speed: 
-                <input type="number" id="maxSpeed" step="0.1" value="${Settings.maxSpeed}">
-            </label>
-            <label>Background Color: 
-                <input type="color" id="bgColor" value="${Settings.bgColor}">
-            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                <h4>
+                    Min Speed:
+                    <input type="number" id="minSpeed" step="0.01" value="${Settings.minSpeed}" style="width: 100%;">
+                </h4>
+                <h4>
+                    Max Speed: 
+                    <input type="number" id="maxSpeed" step="0.01" value="${Settings.maxSpeed}" style="width: 100%;">
+                </h4>
+            </div>
+            <h4 style="margin-top: 4px">Background Color: 
+                <input type="color" id="bgColor" value="${Settings.bgColor}" style="width: 50%; height: 12px">
+            </h4>
         `;
 
         // Append interaction sliders
@@ -96,10 +103,10 @@ export default class Settings {
             for (let j = i + 1; j < Settings.N_COLORS; j++) {
                 const interactionDiv = document.createElement("div");
                 interactionDiv.innerHTML = `
-                    <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[i]};"></span>
-                    -
-                    <span style="display: inline-block; width: 20px; height: 20px; background-color: ${Settings.colors[j]};"></span>
-                    <input type="range" min="-1" max="1" step="0.1" value="0" 
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[i]};"></span>
+                    to
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: ${Settings.colors[j]};"></span>
+                    <input type="range" min="-1" max="1" step="0.01" value="0" style="width: 60%;"
                            data-colorA="${i}" data-colorB="${j}"
                            oninput="this.nextElementSibling.textContent = this.value">
                     <span class="range-value">${Settings.interactionMatrix[i][j].toFixed(2)}</span>
@@ -107,6 +114,10 @@ export default class Settings {
                 settingsDiv.querySelector("#interactionSettings").appendChild(interactionDiv);
             }
         }
+
+        // Append button and content to body
+        document.body.appendChild(settingsButton);
+        document.body.appendChild(settingsDiv);
 
         // Event listeners for settings changes
         settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
@@ -119,15 +130,61 @@ export default class Settings {
                 spanValue.textContent = force.toFixed(2);
 
                 Settings.setInteraction(colorA, colorB, force);
+                console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + force);
             });
         });
-        document.getElementById("nParticles").addEventListener("input", (e) => Settings.setNParticles(parseInt(e.target.value, 10)));
-        document.getElementById("minSpeed").addEventListener("input", (e) => Settings.setMinSpeed(parseFloat(e.target.value)));
-        document.getElementById("maxSpeed").addEventListener("input", (e) => Settings.setMaxSpeed(parseFloat(e.target.value)));
-        document.getElementById("bgColor").addEventListener("input", (e) => Settings.setBgColor(e.target.value));
-
-        // Append to body
-        document.body.appendChild(header);
-        document.body.appendChild(settingsDiv);
+        document.getElementById("nParticles").addEventListener("input", (e) => {
+            Settings.setNParticles(parseInt(e.target.value, 10));
+            console.log("Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
+        });
+        document.getElementById("minSpeed").addEventListener("input", (e) => {
+            Settings.setMinSpeed(parseFloat(e.target.value));
+            console.log("Settings changed - Settings.minSpeed = " + Settings.minSpeed);
+        });
+        document.getElementById("maxSpeed").addEventListener("input", (e) => {
+            Settings.setMaxSpeed(parseFloat(e.target.value));
+            console.log("Settings changed - Settings.maxSpeed = " + Settings.maxSpeed);
+        });
+        document.getElementById("bgColor").addEventListener("input", (e) => {
+            Settings.setBgColor(e.target.value);
+            console.log("Settings changed - Settings.bgColor = " + Settings.bgColor);
+        });
     }
 }
+
+// Llama a Settings.render() después de cargar el DOM
+document.addEventListener("DOMContentLoaded", () => {
+    // Append button and content to body
+    document.body.appendChild(settingsButton);
+    document.body.appendChild(settingsDiv);
+
+    // Event listeners for settings changes
+    settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
+        slider.addEventListener("input", (e) => {
+            const colorA = parseInt(e.target.getAttribute("data-colorA"), 10);
+            const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
+            const force = parseFloat(e.target.value);
+
+            const spanValue = e.target.nextElementSibling;
+            spanValue.textContent = force.toFixed(2);
+
+            Settings.setInteraction(colorA, colorB, force);
+        });
+    });
+    document.getElementById("nParticles").addEventListener("input", (e) => {
+        Settings.setNParticles(parseInt(e.target.value, 10));
+        console.log("DOMContentLoaded - Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
+    });
+    document.getElementById("minSpeed").addEventListener("input", (e) => {
+        Settings.setMinSpeed(parseFloat(e.target.value));
+        console.log("DOMContentLoaded - Settings changed - Settings.minSpeed = " + Settings.minSpeed);
+    });
+    document.getElementById("maxSpeed").addEventListener("input", (e) => {
+        Settings.setMaxSpeed(parseFloat(e.target.value));
+        console.log("DOMContentLoaded - Settings changed - Settings.maxSpeed = " + Settings.maxSpeed);
+    });
+    document.getElementById("bgColor").addEventListener("input", (e) => {
+        Settings.setBgColor(e.target.value);
+        console.log("DOMContentLoaded - Settings changed - Settings.bgColor = " + Settings.bgColor);
+    });
+});
