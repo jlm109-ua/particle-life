@@ -57,6 +57,21 @@ export default class Universe {
     }
 
     /**
+     * @method force - Calculates the force between two particles.
+     * @param {*} r Distance between two particles.
+     * @param {*} a Interaction matrix value.
+     * @returns {Float} The force between two particles.
+     */
+    force(r, a) {
+        if (r < Settings.beta)
+            return r / Settings.beta - 1;
+        else if (Settings.beta < r && r < 1)
+            return a + (1 - Math.abs(2 * r - 1 - Settings.beta) / (1 - Settings.beta));
+        else
+            return 0;
+    }
+
+    /**
      * @method update - Updates all particles in the universe.
      */
     update() {
@@ -79,36 +94,42 @@ export default class Universe {
         }
 
         this.particles.forEach((particleA, i) => {
-            let totalForces = this.p.createVector(0, 0); // Vector to store the total force acting on the particle
+            let totalForceX = 0; // Total force in the x direction
+            let totalForceY = 0; // Total force in the y direction
+            let totalForces = this.p.createVector(totalForceX, totalForceY); // Vector to store the total force acting on the particle
 
             this.particles.forEach((particleB, j) => {
                 if (j === i) return; // Skip the current particle
                 const rx = particleB.position.x - particleA.position.x; // Calculate the x distance between the particles
                 const ry = particleB.position.y - particleA.position.y; // Calculate the y distance between the particles
+                const r = Math.hypot(rx, ry); // Calculate the distance between the particles
 
-                /* Update the velocities */
-
-
-
-
-                /* if (i !== j) {
-                    const colorIndexA = Math.floor(this.p.hue(particleA.color) / (360 / Settings.N_COLORS));
-                    const colorIndexB = Math.floor(this.p.hue(particleB.color) / (360 / Settings.N_COLORS));
-
-                    const forceMagnitude = Settings.interactionMatrix[colorIndexA][colorIndexB];
-
-                    const distance = this.p.dist(particleA.position.x, particleA.position.y, particleB.position.x, particleB.position.y);
-                    if (distance > 0) {
-                        const force = this.p.createVector(
-                            (particleB.position.x - particleA.position.x) / distance,
-                            (particleB.position.y - particleA.position.y) / distance
-                        ).mult(forceMagnitude / distance);
-
-                        particleA.velocity.add(force);
-                    }
-                } */
+                if (r > 0 && r < Settings.rMax) {
+                    const f = this.force(r / Settings.rMax, Settings.interactionMatrix[particleA.color][particleB.color]); // Calculate the force between the particles
+                    totalForceX += rx / r * f; // Calculate the x component of the force
+                    totalForceY += ry / r * f; // Calculate the y component of the force
+                    totalForces.add(this.p.createVector(totalForceX, totalForceY)); // Add the force to the total force acting on the particle
+                }
             });
-            particleA.update(); // Update the particle's position based on its velocity
+
+            totalForceX *= Settings.rMax * Settings.forceFactor; // Scale the x component of the force
+            totalForceY *= Settings.rMax * Settings.forceFactor; // Scale the y component of the force
+
+            particleA.velocity.x *= Settings.frictionFactor; // Apply friction to the x component of the velocity
+            particleA.velocity.y *= Settings.frictionFactor; // Apply friction to the y component of the velocity
+
+            particleA.velocity.x += totalForceX * Settings.dt; // Update the x component of the velocity
+            particleA.velocity.y += totalForceY * Settings.dt; // Update the y component of the velocity
+
+            particleA.position.add(particleA.velocity); // Move the particle by adding its velocity to its position
+
+            // The particle space will be a wrap-around space
+            if (particleA.position.x < 0) particleA.position.x = this.p.width;
+            if (particleA.position.x > this.p.width) particleA.position.x = 0;
+            if (particleA.position.y < 0) particleA.position.y = this.p.height;
+            if (particleA.position.y > this.p.height) particleA.position.y = 0;
+
+            //particleA.update(); // Update the particle's position based on its velocity
         });
     }
 

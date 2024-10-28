@@ -20,7 +20,7 @@ export default class Particle {
     }
 
     /**
-     * @method update - Updates the particle's position based on its velocity.
+     * @method update - Updates the particle's position based on its velocity and total force.
      */
     update() {
         // DEBUG: console.log("Particle - Updating velocity from (" + this.xSpeed + "," + this.ySpeed + ") to (" + this.xSpeed * Settings.SPEED_CONSTANT + "," + this.ySpeed * Settings.SPEED_CONSTANT + ")");
