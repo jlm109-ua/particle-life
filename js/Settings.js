@@ -1,30 +1,43 @@
 export default class Settings {
     // Universe settings
-    static N_PARTICLES = 100;
+    static N_PARTICLES = 100; // Number of particles
+    static dt = 0.02; // Time step
+    static rMax = 0.1; // Maximum interaction radius
+    static interactionMatrix = Array.from( // Interaction matrix
+        { length: Settings.N_COLORS },
+        () => Array(Settings.N_COLORS).fill(0) // Initialized to 0
+    );
+    static frictionHalfLife = 0.040; // Friction half-life
+    static frictionFactor = Math.pow(0.5, Settings.dt / Settings.frictionHalfLife); // Friction factor
 
     // Particle settings
-    static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-    static N_COLORS = this.colors.length;
-    static minSpeed = -1;
-    static maxSpeed = 1;
-    static SPEED_CONSTANT = 1;
-    static interactionMatrix = Array.from(
-        { length: Settings.N_COLORS },
-        () => Array(Settings.N_COLORS).fill(0)
-    );
+    static colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']; // Colors
+    static N_COLORS = this.colors.length; // Number of colors
+    static minSpeed = -1; // Minimum speed a particle can have
+    static maxSpeed = 1; // Maximum speed a particle can have
+    static SPEED_CONSTANT = 1; // Speed constant for all particles
 
     // Canvas settings
     static bgColor = '#111111';
 
     /* UNIVERSE SETTERS */
     static setNParticles(nParticles) { Settings.N_PARTICLES = nParticles; }
+    static setDt(dt) { Settings.dt = dt; }
+    static setRMax(rMax) { Settings.rMax = rMax; }
+    static setInteractionMatrix(interactionMatrix) { Settings.interactionMatrix = interactionMatrix; }
+    static setInteraction(colorA, colorB, force) { // Set interaction force between two colors, not the whole matrix
+        Settings.interactionMatrix[colorA][colorB] = force;
+    }
+    static setFrictionHalfLife(frictionHalfLife) { Settings.frictionHalfLife = frictionHalfLife; }
+    static setFrictionFactor(frictionFactor) { Settings.frictionFactor = frictionFactor; }
+
+    /* PARTICLE SETTERS */
     static setMinSpeed(minSpeed) { Settings.minSpeed = minSpeed; }
     static setMaxSpeed(maxSpeed) { Settings.maxSpeed = maxSpeed; }
     static setSpeedConstant(speedConstant) { Settings.SPEED_CONSTANT = speedConstant; }
+
+    /* CANVAS SETTERS */
     static setBgColor(bgColor) { Settings.bgColor = bgColor; }
-    static setInteraction(colorA, colorB, force) {
-        Settings.interactionMatrix[colorA][colorB] = force;
-    }
 
     /* METHODS */
     static render() {

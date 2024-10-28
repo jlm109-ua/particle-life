@@ -71,6 +71,7 @@ export default class Universe {
             this.p.background(this.bgColor);
         }
 
+        // Check if the speed constant has changed (it is set to 1 at default)
         if (Settings.SPEED_CONSTANT !== 1) {
             this.particles.forEach((particle) => {
                 particle.update();
