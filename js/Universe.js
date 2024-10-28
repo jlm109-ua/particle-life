@@ -26,7 +26,7 @@ export default class Universe {
     updateParticles() {
         this.particles = [];
         for (let i = 0; i < Settings.N_PARTICLES; i++) {
-            const colorHue = this.p.random(0, 360); // Color aleatorio en el rango HSB
+            const colorHue = this.p.random(Settings.colors); // Color aleatorio en el rango HSB
             const color = this.p.color(colorHue, 100, 100); // Genera el color en HSB
             const particle = new Particle(this.p, color);
             this.particles.push(particle);
@@ -87,11 +87,11 @@ export default class Universe {
         }
 
         // Check if the speed constant has changed (it is set to 1 at default)
-        if (Settings.SPEED_CONSTANT !== 1) {
+        /* if (Settings.SPEED_CONSTANT !== 1) {
             this.particles.forEach((particle) => {
                 particle.update();
             })
-        }
+        } */
 
         this.particles.forEach((particleA, i) => {
             let totalForceX = 0; // Total force in the x direction
@@ -120,6 +120,9 @@ export default class Universe {
 
             particleA.velocity.x += totalForceX * Settings.dt; // Update the x component of the velocity
             particleA.velocity.y += totalForceY * Settings.dt; // Update the y component of the velocity
+
+            particleA.velocity.x *= Settings.SPEED_CONSTANT; // Apply the speed constant to the x component of the velocity
+            particleA.velocity.y *= Settings.SPEED_CONSTANT; // Apply the speed constant to the y component of the velocity
 
             particleA.position.add(particleA.velocity); // Move the particle by adding its velocity to its position
 

@@ -7,7 +7,7 @@ export default class Particle {
     /**
      * @constructor - Initializes a particle with random position, velocity, and a given color.
      * @param {object} p - The p5 instance to access p5 methods.
-     * @param {string} color - Color of the particle.
+     * @param {object} color - The color of the particle.
      */
     constructor(p, color) {
         this.p = p; // Store the p5 instance for accessing p5 functions
@@ -17,6 +17,7 @@ export default class Particle {
         this.position = this.p.createVector(this.p.random(this.p.width), this.p.random(this.p.height)); // Random starting position within the canvas
         this.velocity = this.p.createVector(this.xSpeed, this.ySpeed); // Random initial velocity between minSpeed and maxSpeed
         this.color = color; // Set the particle's color
+        console.log("Particle - Color is: " + this.color);
     }
 
     /**
