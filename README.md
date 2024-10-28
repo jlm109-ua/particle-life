@@ -49,4 +49,4 @@ npm start
 
 ## Configuration
 
-We created a file called [`Settings.js`](https://www.github.com/jlm109-ua/particle-life/js/Settings.js) so you can modify the parameters of the simulation. These settings will show up on the web as collapsible buttons.
+We created a file called [`Settings.js`](https://github.com/jlm109-ua/particle-life/blob/master/js/Settings.js) so you can modify the parameters of the simulation. These settings will show up on the web as collapsible buttons.
