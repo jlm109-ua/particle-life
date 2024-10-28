@@ -1,15 +1,22 @@
 export default class Settings {
     // Particle settings
-    static colors = [0, 60, 120, 180, 240, 300]; // Colors in HSB
+    static colors = [
+        0, // Red
+        60, // Yellow
+        120, // Green
+        180, // Cyan
+        240, // Blue
+        300 // Magenta
+    ]; // Colors in HSB
     static N_COLORS = this.colors.length; // Number of colors
     static minSpeed = -1; // Minimum speed a particle can have
     static maxSpeed = 1; // Maximum speed a particle can have
-    static SPEED_CONSTANT = 1; // Speed constant for all particles
+    static SPEED_CONSTANT = null; // Speed constant for all particles
 
     // Universe settings
-    static N_PARTICLES = 100; // Number of particles
-    static dt = 0.02; // Time step
-    static rMax = 0.1; // Maximum interaction radius
+    static N_PARTICLES = 2; // Number of particles
+    static dt = 0.01; // Time step
+    static rMax = 500; // Maximum interaction radius
     static interactionMatrix = Array.from( // Interaction matrix
         { length: Settings.N_COLORS },
         // Initialized to 0. Uncomment and comment the next line to initialize to 0
@@ -19,7 +26,7 @@ export default class Settings {
     );
     static frictionHalfLife = 0.040; // Friction half-life
     static frictionFactor = Math.pow(0.5, Settings.dt / Settings.frictionHalfLife); // Friction factor
-    static beta = 0.3; // Beta value for the force function
+    static beta = 0.2; // Beta value for the force function
     static forceFactor = 10; // Force factor for the force function
 
     // Canvas settings
@@ -119,32 +126,12 @@ export default class Settings {
             </h4>
         `;
 
-        /* // Interactions button
-        const interactionsDiv = document.createElement("div");
-
-        interactionsDiv.id = "interactions-menu";
-        interactionsDiv.style = `
-            position: absolute;
-            top: 30px;
-            right: 250px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 8px;
-            width: 500px;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            z-index: 10;
-            display: none;
-            margin-top: 4px;
-        `;
-
-        // "Interactions" button to toggle interactions sliders visibility
-        const interactionsButton = document.createElement("div");
-        interactionsButton.style = `
+        // Matrix button
+        const matrixButton = document.createElement("div");
+        matrixButton.style = `
             position: absolute;
             top: 10px;
-            right: 250px;
+            right: 270px;
             padding: 5px 10px;
             background: rgba(0, 0, 0, 0.7);
             color: white;
@@ -154,63 +141,6 @@ export default class Settings {
             cursor: pointer;
             z-index: 20;
         `;
-        interactionsButton.textContent = "Interactions ▼"
-
-        // Toggle interactions button visibility on click
-        let isInteractionsButtonVisible = false;
-        interactionsButton.onclick = () => {
-            isInteractionsButtonVisible = !isInteractionsButtonVisible;
-            interactionsDiv.style.display = isInteractionsButtonVisible ? "block" : "none";
-            interactionsButton.textContent = isInteractionsButtonVisible ? "Interactions ▲" : "Interactions ▼";
-        };
-
-        // Interactions inner content
-        interactionsDiv.innerHTML = `
-            <div id="interactionSettings" style="margin-top: 4px">
-                <h4>Interactions</h4>
-                <div id="interactionColumns" style="display: flex; flex-wrap: wrap;">
-                    <div class="column" style="flex: 1; padding: 10px;"></div>
-                    <div class="column" style="flex: 1; padding: 10px;"></div>
-                </div>
-            </div>
-        `;
-
-        // Selecciona el elemento interactionColumns
-        const interactionColumns = interactionsDiv.querySelectorAll("#interactionColumns .column");
-
-        // Append interaction sliders
-        for (let i = 0; i < Settings.N_COLORS; i++) {
-            for (let j = 0; j < Settings.N_COLORS; j++) {
-                const interactionDiv = document.createElement("div");
-                interactionDiv.innerHTML = `
-                    <span style="display: inline-block; width: 10px; height: 10px; background-color: hsb(${Settings.colors[i]}, 100, 100);"></span>
-                    to
-                    <span style="display: inline-block; width: 10px; height: 10px; background-color: hsb(${Settings.colors[j]}, 100, 100);"></span>
-                    <input type="range" min="-1" max="1" step="0.01" value="0" style="width: 60%;"
-                        data-colorA="${i}" data-colorB="${j}"
-                        oninput="this.nextElementSibling.textContent = this.value">
-                    <span class="range-value">${Settings.interactionMatrix[i][j].toFixed(2)}</span>
-                `;
-                // Alterna entre las dos columnas
-                interactionColumns[(i + j) % 2].appendChild(interactionDiv);
-            }
-        } */
-
-        // Matrix button
-        const matrixButton = document.createElement("div");
-        matrixButton.style = `
-    position: absolute;
-    top: 10px;
-    right: 270px;
-    padding: 5px 10px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 5px;
-    font-size: 12px;
-    font-family: Arial, sans-serif;
-    cursor: pointer;
-    z-index: 20;
-`;
         matrixButton.textContent = "Interaction Matrix ▼";
 
         // Matrix div (the table container)

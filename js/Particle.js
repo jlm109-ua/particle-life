@@ -9,7 +9,8 @@ export default class Particle {
      * @param {object} p - The p5 instance to access p5 methods.
      * @param {object} color - The color of the particle.
      */
-    constructor(p, color) {
+    constructor(id, p, color) {
+        this.id = id; // Save the particle id for debug purposes
         this.p = p; // Store the p5 instance for accessing p5 functions
         this.xSpeed = this.p.random(Settings.minSpeed, Settings.maxSpeed); // Save the x speed
         this.ySpeed = this.p.random(Settings.minSpeed, Settings.maxSpeed); // Save the y speed
@@ -44,5 +45,7 @@ export default class Particle {
         this.p.fill(this.color); // Set the particle's fill color
         this.p.noStroke(); // Remove any outline from the particle
         this.p.circle(this.position.x, this.position.y, 5); // Draw the particle as a circle with a radius of 5
+        // For debug we will show the particle id
+        this.p.text(this.id, this.position.x - 4, this.position.y - 5);
     }
 }
