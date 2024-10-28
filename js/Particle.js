@@ -24,7 +24,9 @@ export default class Particle {
      */
     update() {
         // DEBUG: console.log("Particle - Updating velocity from (" + this.xSpeed + "," + this.ySpeed + ") to (" + this.xSpeed * Settings.SPEED_CONSTANT + "," + this.ySpeed * Settings.SPEED_CONSTANT + ")");
-        this.velocity = this.p.createVector(this.xSpeed * Settings.SPEED_CONSTANT, this.ySpeed * Settings.SPEED_CONSTANT); // Update the velocity vector
+        const velXdt = (this.xSpeed * Settings.dt) * Settings.SPEED_CONSTANT; // Calculate the change in x position
+        const velYdt = (this.ySpeed * Settings.dt) * Settings.SPEED_CONSTANT; // Calculate the change in y position
+        this.velocity = this.p.createVector(velXdt, velYdt); // Update the velocity vector
         this.position.add(this.velocity); // Move the particle by adding its velocity to its position
 
         // The particle space will be a wrap-around space

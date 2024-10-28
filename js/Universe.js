@@ -79,8 +79,19 @@ export default class Universe {
         }
 
         this.particles.forEach((particleA, i) => {
+            let totalForces = this.p.createVector(0, 0); // Vector to store the total force acting on the particle
+
             this.particles.forEach((particleB, j) => {
-                if (i !== j) {
+                if (j === i) return; // Skip the current particle
+                const rx = particleB.position.x - particleA.position.x; // Calculate the x distance between the particles
+                const ry = particleB.position.y - particleA.position.y; // Calculate the y distance between the particles
+
+                /* Update the velocities */
+
+
+
+
+                /* if (i !== j) {
                     const colorIndexA = Math.floor(this.p.hue(particleA.color) / (360 / Settings.N_COLORS));
                     const colorIndexB = Math.floor(this.p.hue(particleB.color) / (360 / Settings.N_COLORS));
 
@@ -95,9 +106,9 @@ export default class Universe {
 
                         particleA.velocity.add(force);
                     }
-                }
+                } */
             });
-            particleA.update();
+            particleA.update(); // Update the particle's position based on its velocity
         });
     }
 
