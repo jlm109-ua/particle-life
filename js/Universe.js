@@ -26,12 +26,14 @@ export default class Universe {
     updateParticles() {
         this.particles = [];
         for (let id = 0; id < Settings.N_PARTICLES; id++) {
-            const randomColor = this.p.random(0, 5).toFixed(0); // Random color index
-            console.log("Universe - Random color index is: " + randomColor);
+            // Create a random color for the particle from the color palette on Settings.colors
+            const randomColor = (Math.random() * 5).toFixed(0); // Random color index
+            // const randomColor = this.p.random(0, 5).toFixed(0); // Random color index
+            // console.log("Universe - Random color index is: " + randomColor);
             const colorHue = Settings.colors[randomColor]; // Random color hue
-            console.log("Universe - Random color is: " + randomColor);
+            // console.log("Universe - Random color is: " + randomColor);
             const color = this.p.color(colorHue, 100, 100); // Create a color object
-            console.log("Universe - Color is: " + color);
+            // console.log("Universe - Color is: " + color.toString());
             const particle = new Particle(id, this.p, color);
             this.particles.push(particle);
         }
@@ -41,7 +43,8 @@ export default class Universe {
      * @method setup - Sets up the canvas and creates particles.
      */
     setup() {
-        this.p.colorMode(this.p.HSB); // Set the color mode to HSB: Hue, Saturation, Brightness
+        // console.log("p5.HSB = " + this.p.HSB);
+        this.p.colorMode(this.p.HSB, 100, 100); // Set the color mode to HSB: Hue, Saturation, Brightness
         this.p.createCanvas(this.width, this.height); // Create the canvas with specified dimensions
         this.p.background(this.bgColor); // Set the background color
         this.updateParticles(); // Create particles in the universe
@@ -76,17 +79,17 @@ export default class Universe {
 
     getColor(color) {
         switch (color) {
-            case color === rgba(255, 255, 255, 1):
+            case color.toString() === this.p.color(Settings.colors[0]).toString():
                 return 0;
-            case color === rgba(255, 255, 0, 1):
+            case color.toString() === this.p.color(Settings.colors[1]).toString():
                 return 1;
-            case color === rgba(0, 255, 0, 1):
+            case color.toString() === this.p.color(Settings.colors[2]).toString():
                 return 2;
-            case color === rgba(255, 0, 255, 1):
+            case color.toString() === this.p.color(Settings.colors[3]).toString():
                 return 3;
-            case color === rgba(0, 0, 255, 1):
+            case color.toString() === this.p.color(Settings.colors[4]).toString():
                 return 4;
-            case color === rgba(255, 0, 0, 1):
+            default:
                 return 5;
         }
     }
@@ -127,13 +130,14 @@ export default class Universe {
                 console.log("Universe - \tParticle " + particleB.id + " position is: " + particleB.position);
                 console.log("Universe - \tDistance between particles " + particleA.id + " and " + particleB.id + " is: " + r);
 
-                console.log("Conditions for interaction: (r > 0) and (r < Settings.rMax) are " + (r > 0) + " and " + (r < Settings.rMax) + " so the interaction is: " + (r > 0 && r < Settings.rMax));
+                // console.log("Conditions for interaction: (r > 0) and (r < Settings.rMax) are " + (r > 0) + " and " + (r < Settings.rMax) + " so the interaction is: " + (r > 0 && r < Settings.rMax));
                 if (r > 0 && r < Settings.rMax) {
                     const colorA = this.getColor(particleA.color);
-                    console.log("Universe - Color A is: " + colorA);
+                    // console.log("Universe - Color A is: " + colorA);
                     const colorB = this.getColor(particleB.color);
-                    console.log("Universe - Color B is: " + colorB);
+                    // console.log("Universe - Color B is: " + colorB);
                     const f = this.force(r / Settings.rMax, Settings.interactionMatrix[colorA][colorB]); // Calculate the force between the particles
+                    console.log("Universe - Force between particles " + particleA.id + " and " + particleB.id + " is: " + f);
                     totalForceX += rx / r * f; // Calculate the x component of the force
                     totalForceY += ry / r * f; // Calculate the y component of the force
                     totalForces.add(this.p.createVector(totalForceX, totalForceY)); // Add the force to the total force acting on the particle
@@ -154,13 +158,33 @@ export default class Universe {
 
             particleA.position.add(particleA.velocity); // Move the particle by adding its velocity to its position
 
-            // The particle space will be a wrap-around space
-            if (particleA.position.x < 0) particleA.position.x = this.p.width;
-            if (particleA.position.x > this.p.width) particleA.position.x = 0;
-            if (particleA.position.y < 0) particleA.position.y = this.p.height;
-            if (particleA.position.y > this.p.height) particleA.position.y = 0;
+            // Check if the particle should wrap around the canvas
+            if (Settings.wrapAround) {
+                if (particleA.position.x < 0) particleA.position.x = this.p.width;
+                if (particleA.position.x > this.p.width) particleA.position.x = 0;
+                if (particleA.position.y < 0) particleA.position.y = this.p.height;
+                if (particleA.position.y > this.p.height) particleA.position.y = 0;
+            }
 
-            //particleA.update(); // Update the particle's position based on its velocity
+            // Check if the particle should bounce off the canvas edges
+            if (Settings.box) {
+                if (particleA.position.x < 0) {
+                    particleA.position.x = 0;
+                    particleA.velocity.x *= -1;
+                }
+                if (particleA.position.x > this.p.width) {
+                    particleA.position.x = this.p.width;
+                    particleA.velocity.x *= -1;
+                }
+                if (particleA.position.y < 0) {
+                    particleA.position.y = 0;
+                    particleA.velocity.y *= -1;
+                }
+                if (particleA.position.y > this.p.height) {
+                    particleA.position.y = this.p.height;
+                    particleA.velocity.y *= -1;
+                }
+            }
         });
     }
 

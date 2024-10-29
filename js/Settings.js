@@ -11,23 +11,25 @@ export default class Settings {
     static N_COLORS = this.colors.length; // Number of colors
     static minSpeed = -1; // Minimum speed a particle can have
     static maxSpeed = 1; // Maximum speed a particle can have
-    static SPEED_CONSTANT = null; // Speed constant for all particles
+    static SPEED_CONSTANT = 0.07; // Speed constant for all particles
 
     // Universe settings
-    static N_PARTICLES = 2; // Number of particles
-    static dt = 0.01; // Time step
-    static rMax = 500; // Maximum interaction radius
+    static N_PARTICLES = 0; // Number of particles
+    static dt = 0.06; // Time step
+    static rMax = 1000; // Maximum interaction radius
     static interactionMatrix = Array.from( // Interaction matrix
         { length: Settings.N_COLORS },
         // Initialized to 0. Uncomment and comment the next line to initialize to 0
-        /* () => Array(Settings.N_COLORS).fill(0) */
+        () => Array(Settings.N_COLORS).fill(0)
         // Initialized to random values between -1 and 1 with 2 decimal places
-        () => Array(Settings.N_COLORS).fill(0).map(() => parseFloat((Math.random() * 2 - 1).toFixed(2)))
+        // () => Array(Settings.N_COLORS).fill(0).map(() => parseFloat((Math.random() * 2 - 1).toFixed(2)))
     );
     static frictionHalfLife = 0.040; // Friction half-life
     static frictionFactor = Math.pow(0.5, Settings.dt / Settings.frictionHalfLife); // Friction factor
-    static beta = 0.2; // Beta value for the force function
-    static forceFactor = 10; // Force factor for the force function
+    static beta = 0.05; // Beta value for the force function
+    static forceFactor = 5; // Force factor for the force function
+    static wrapAround = true; // Wrap around space
+    static box = false; // Box space
 
     // Canvas settings
     static bgColor = '#111111';
@@ -99,18 +101,23 @@ export default class Settings {
 
         // Settings inner content
         settingsDiv.innerHTML = `
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Background Color: 
+                <input type="color" id="bgColor" value="${Settings.bgColor}" style="width: 50%; height: 12px;">
+            </h4>
             <h4>Colors
-                <div id="colors" style="margin-top: 4px">
-                    ${Settings.colors.map((color) => `<div style="background-color: hsb(${color}, 100, 100); width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
+                <div id="colors" style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 2px; width: 100%;">
+                    ${Settings.colors.map((color) => `<div style="background-color: hsl(${color}, 100%, 50%); width: 100%; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
                 </div>
             </h4>
-            <h4>Particles:
-                <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="0" style="width: 50%">
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Particles:
+                <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="0" style="width: 50%;">
             </h4>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px;">
                 <h4>
                     Speed:
-                    <input type="number" id="speedConstant" step="0.01" value=${Settings.SPEED_CONSTANT}" style="width: 100%">
+                    <input type="number" id="speedConstant" step="0.01" value="${Settings.SPEED_CONSTANT}" style="width: 100%;">
                 </h4>
                 <h4>
                     Min Speed:
@@ -121,9 +128,42 @@ export default class Settings {
                     <input type="number" id="maxSpeed" step="0.01" value="${Settings.maxSpeed}" style="width: 100%;">
                 </h4>
             </div>
-            <h4 style="margin-top: 4px">Background Color: 
-                <input type="color" id="bgColor" value="${Settings.bgColor}" style="width: 50%; height: 12px">
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Time Step:
+                <input type="number" id="dt" value="${Settings.dt}" step="0.01" style="width: 50%;">
             </h4>
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Interaction Radius:
+                <input type="number" id="rMax" value="${Settings.rMax}" step="1" style="width: 50%;">
+            </h4>
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Friction Half-Life:
+                <input type="number" id="frictionHalfLife" value="${Settings.frictionHalfLife}" step="0.01" style="width: 50%;">
+            </h4>
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Friction Factor:
+                <input type="number" id="frictionFactor" value="${Settings.frictionFactor}" step="0.01" style="width: 50%;">
+            </h4>
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Beta:
+                <input type="number" id="beta" value="${Settings.beta}" step="0.01" style="width: 50%;">
+            </h4>
+            <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
+                Force Factor:
+                <input type="number" id="forceFactor" value="${Settings.forceFactor}" step="0.01" style="width: 50%;">
+            </h4>
+            <h4 style="margin-top: 4px; text-align: center;">Space
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; text-align: center;">
+                <h4>
+                    <input type="checkbox" id="wrapAround" ${Settings.wrapAround ? "checked" : ""}>
+                    Wrap Around
+                </h4>
+                <h4>
+                    <input type="checkbox" id="box" ${Settings.box ? "checked" : ""}>
+                    Box
+                </h4>
+            </div>
         `;
 
         // Matrix button
@@ -200,6 +240,7 @@ export default class Settings {
                 const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
                 const value = parseFloat(e.target.value);
                 Settings.setInteraction(colorA, colorB, value);
+                // // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + value);
             });
         });
 
@@ -226,28 +267,63 @@ export default class Settings {
                 spanValue.textContent = force.toFixed(2);
 
                 Settings.setInteraction(colorA, colorB, force);
-                console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + force);
+                // // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + force);
             });
         });
         document.getElementById("nParticles").addEventListener("input", (e) => {
             Settings.setNParticles(parseInt(e.target.value, 10));
-            console.log("Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
+            // console.log("Settings changed - Settings.N_PARTICLES = " + Settings.N_PARTICLES);
         });
         document.getElementById("speedConstant").addEventListener("input", (e) => {
             Settings.setSpeedConstant(parseFloat(e.target.value));
-            console.log("Settings changed - Settings.SPEED_CONSTANT = " + Settings.SPEED_CONSTANT);
+            // console.log("Settings changed - Settings.SPEED_CONSTANT = " + Settings.SPEED_CONSTANT);
         });
         document.getElementById("minSpeed").addEventListener("input", (e) => {
             Settings.setMinSpeed(parseFloat(e.target.value));
-            console.log("Settings changed - Settings.minSpeed = " + Settings.minSpeed);
+            // console.log("Settings changed - Settings.minSpeed = " + Settings.minSpeed);
         });
         document.getElementById("maxSpeed").addEventListener("input", (e) => {
             Settings.setMaxSpeed(parseFloat(e.target.value));
-            console.log("Settings changed - Settings.maxSpeed = " + Settings.maxSpeed);
+            // console.log("Settings changed - Settings.maxSpeed = " + Settings.maxSpeed);
         });
         document.getElementById("bgColor").addEventListener("input", (e) => {
             Settings.setBgColor(e.target.value);
-            console.log("Settings changed - Settings.bgColor = " + Settings.bgColor);
+            // console.log("Settings changed - Settings.bgColor = " + Settings.bgColor);
+        });
+        document.getElementById("dt").addEventListener("input", (e) => {
+            Settings.setDt(parseFloat(e.target.value));
+            // console.log("Settings changed - Settings.dt = " + Settings.dt);
+        });
+        document.getElementById("rMax").addEventListener("input", (e) => {
+            Settings.setRMax(parseFloat(e.target.value));
+            // console.log("Settings changed - Settings.rMax = " + Settings.rMax);
+        });
+        document.getElementById("frictionHalfLife").addEventListener("input", (e) => {
+            Settings.setFrictionHalfLife(parseFloat(e.target.value));
+            // console.log("Settings changed - Settings.frictionHalfLife = " + Settings.frictionHalfLife);
+        });
+        document.getElementById("frictionFactor").addEventListener("input", (e) => {
+            Settings.setFrictionFactor(parseFloat(e.target.value));
+            // console.log("Settings changed - Settings.frictionFactor = " + Settings.frictionFactor);
+        });
+        document.getElementById("beta").addEventListener("input", (e) => {
+            Settings.beta = parseFloat(e.target.value);
+            // console.log("Settings changed - Settings.beta = " + Settings.beta);
+        });
+        document.getElementById("forceFactor").addEventListener("input", (e) => {
+            Settings.forceFactor = parseFloat(e.target.value);
+            // console.log("Settings changed - Settings.forceFactor = " + Settings.forceFactor);
+        });
+        document.getElementById("wrapAround").addEventListener("input", (e) => {
+            Settings.wrapAround = e.target.checked;
+            Settings.box = !e.target.checked;
+            console.log("Settings changed - Settings.wrapAround = " + Settings.wrapAround);
+            console.log("Settings changed - Settings.box = " + Settings.box);
+        });
+        document.getElementById("box").addEventListener("input", (e) => {
+            Settings.box = e.target.checked;
+            Settings.wrapAround = !e.target.checked;
+            // console.log("Settings changed - Settings.box = " + Settings.box);
         });
     }
 }
