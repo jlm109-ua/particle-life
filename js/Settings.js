@@ -30,6 +30,7 @@ export default class Settings {
     static forceFactor = 5; // Force factor for the force function
     static wrapAround = true; // Wrap around space
     static box = false; // Box space
+    static pause = false; // Pause the simulation
 
     // Canvas settings
     static bgColor = '#111111';
@@ -44,6 +45,11 @@ export default class Settings {
     }
     static setFrictionHalfLife(frictionHalfLife) { Settings.frictionHalfLife = frictionHalfLife; }
     static setFrictionFactor(frictionFactor) { Settings.frictionFactor = frictionFactor; }
+    static setBeta(beta) { Settings.beta = beta; }
+    static setForceFactor(forceFactor) { Settings.forceFactor = forceFactor; }
+    static setWrapAround(wrapAround) { Settings.wrapAround = wrapAround; }
+    static setBox(box) { Settings.box = box; }
+    static setPause(pause) { Settings.pause = pause; }
 
     /* PARTICLE SETTERS */
     static setMinSpeed(minSpeed) { Settings.minSpeed = minSpeed; }
@@ -105,8 +111,8 @@ export default class Settings {
                 Background Color: 
                 <input type="color" id="bgColor" value="${Settings.bgColor}" style="width: 50%; height: 12px;">
             </h4>
-            <h4>Colors
-                <div id="colors" style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 2px; width: 100%;">
+            <h4 style="text-align: center;">Colors
+                <div id="colors" style="display: grid; grid-template-columns: ${Settings.colors.map(() => "1fr").join(" ")}; gap: 5px; margin-top: 2px;">
                     ${Settings.colors.map((color) => `<div style="background-color: hsl(${color}, 100%, 50%); width: 100%; height: 20px; display: inline-block; margin-right: 5px;"></div>`).join("")}
                 </div>
             </h4>
@@ -115,16 +121,16 @@ export default class Settings {
                 <input type="number" id="nParticles" value="${Settings.N_PARTICLES}" min="0" style="width: 50%;">
             </h4>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px;">
-                <h4>
-                    Speed:
+                <h4 style="text-align: center;">
+                    Speed
                     <input type="number" id="speedConstant" step="0.01" value="${Settings.SPEED_CONSTANT}" style="width: 100%;">
                 </h4>
-                <h4>
-                    Min Speed:
+                <h4 style="text-align: center;">
+                    Min Speed
                     <input type="number" id="minSpeed" step="0.01" value="${Settings.minSpeed}" style="width: 100%;">
                 </h4>
-                <h4>
-                    Max Speed: 
+                <h4 style="text-align: center;">
+                    Max Speed 
                     <input type="number" id="maxSpeed" step="0.01" value="${Settings.maxSpeed}" style="width: 100%;">
                 </h4>
             </div>
@@ -248,13 +254,25 @@ export default class Settings {
         document.body.appendChild(settingsButton);
         document.body.appendChild(settingsDiv);
 
-        /* // Append interactions button and content to body
-        document.body.appendChild(interactionsButton);
-        document.body.appendChild(interactionsDiv); */
-
         // Append matrix button and table to body
         document.body.appendChild(matrixButton);
         document.body.appendChild(matrixDiv);
+
+        // QuerySelectors for the checkboxes
+        const wrapAroundCheckbox = settingsDiv.querySelector("#wrapAround");
+        const boxCheckbox = settingsDiv.querySelector("#box");
+
+        // Event listener for wrapAround checkbox
+        wrapAroundCheckbox.addEventListener("change", () => {
+            Settings.setBox(!wrapAroundCheckbox.checked);
+            boxCheckbox.checked = !wrapAroundCheckbox.checked;
+        });
+
+        // Event listener for box checkbox
+        boxCheckbox.addEventListener("change", () => {
+            Settings.setWrapAround(!boxCheckbox.checked);
+            wrapAroundCheckbox.checked = !boxCheckbox.checked;
+        });
 
         // Event listeners for settings changes
         settingsDiv.querySelectorAll("input[type='range']").forEach((slider) => {
@@ -307,22 +325,22 @@ export default class Settings {
             // console.log("Settings changed - Settings.frictionFactor = " + Settings.frictionFactor);
         });
         document.getElementById("beta").addEventListener("input", (e) => {
-            Settings.beta = parseFloat(e.target.value);
+            Settings.setBeta(parseFloat(e.target.value));
             // console.log("Settings changed - Settings.beta = " + Settings.beta);
         });
         document.getElementById("forceFactor").addEventListener("input", (e) => {
-            Settings.forceFactor = parseFloat(e.target.value);
+            Settings.setForceFactor(parseFloat(e.target.value));
             // console.log("Settings changed - Settings.forceFactor = " + Settings.forceFactor);
         });
         document.getElementById("wrapAround").addEventListener("input", (e) => {
-            Settings.wrapAround = e.target.checked;
-            Settings.box = !e.target.checked;
+            Settings.setWrapAround(e.target.checked);
+            Settings.setBox(!e.target.checked);
             console.log("Settings changed - Settings.wrapAround = " + Settings.wrapAround);
             console.log("Settings changed - Settings.box = " + Settings.box);
         });
         document.getElementById("box").addEventListener("input", (e) => {
-            Settings.box = e.target.checked;
-            Settings.wrapAround = !e.target.checked;
+            Settings.setBox(e.target.checked);
+            Settings.setWrapAround(!e.target.checked);
             // console.log("Settings changed - Settings.box = " + Settings.box);
         });
     }
