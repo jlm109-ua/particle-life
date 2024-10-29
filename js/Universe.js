@@ -109,12 +109,12 @@ export default class Universe {
             this.p.background(this.bgColor);
         }
 
-        // Check if the speed constant has changed (it is set to 1 at default)
+        /* // Check if the speed constant has changed (it is set to 1 at default)
         if (Settings.SPEED_CONSTANT !== null | Settings.SPEED_CONSTANT !== NaN) {
             this.particles.forEach((particle) => {
                 particle.update();
             })
-        }
+        } */
 
         this.particles.forEach((particleA, i) => {
             let totalForceX = 0; // Total force in the x direction
@@ -123,12 +123,12 @@ export default class Universe {
 
             this.particles.forEach((particleB, j) => {
                 if (j === i) return; // Skip the current particle
-                console.log("Universe - \tParticle " + particleA.id + " position is: " + particleA.position);
+                // console.log("Universe - \tParticle " + particleA.id + " position is [" + particleA.position.x + "," + particleA.position.y + "]");
                 const rx = particleB.position.x - particleA.position.x; // Calculate the x distance between the particles
                 const ry = particleB.position.y - particleA.position.y; // Calculate the y distance between the particles
                 const r = Math.hypot(rx, ry); // Calculate the distance between the particles
-                console.log("Universe - \tParticle " + particleB.id + " position is: " + particleB.position);
-                console.log("Universe - \tDistance between particles " + particleA.id + " and " + particleB.id + " is: " + r);
+                // console.log("Universe - \tParticle " + particleB.id + " position is: [" + particleB.position.x + "," + particleB.position.y + "]");
+                // console.log("Universe - \tDistance between particles " + particleA.id + " and " + particleB.id + " is: " + r);
 
                 // console.log("Conditions for interaction: (r > 0) and (r < Settings.rMax) are " + (r > 0) + " and " + (r < Settings.rMax) + " so the interaction is: " + (r > 0 && r < Settings.rMax));
                 if (r > 0 && r < Settings.rMax) {
@@ -137,7 +137,7 @@ export default class Universe {
                     const colorB = this.getColor(particleB.color);
                     // console.log("Universe - Color B is: " + colorB);
                     const f = this.force(r / Settings.rMax, Settings.interactionMatrix[colorA][colorB]); // Calculate the force between the particles
-                    console.log("Universe - Force between particles " + particleA.id + " and " + particleB.id + " is: " + f);
+                    // console.log("Universe - Force between particles " + particleA.id + " and " + particleB.id + " is: " + f);
                     totalForceX += rx / r * f; // Calculate the x component of the force
                     totalForceY += ry / r * f; // Calculate the y component of the force
                     totalForces.add(this.p.createVector(totalForceX, totalForceY)); // Add the force to the total force acting on the particle

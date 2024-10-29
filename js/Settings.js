@@ -16,21 +16,22 @@ export default class Settings {
     // Universe settings
     static N_PARTICLES = 0; // Number of particles
     static dt = 0.06; // Time step
-    static rMax = 1000; // Maximum interaction radius
+    static rMax = 10; // Maximum interaction radius
     static interactionMatrix = Array.from( // Interaction matrix
         { length: Settings.N_COLORS },
         // Initialized to 0. Uncomment and comment the next line to initialize to 0
-        () => Array(Settings.N_COLORS).fill(0)
+        // () => Array(Settings.N_COLORS).fill(0)
         // Initialized to random values between -1 and 1 with 2 decimal places
-        // () => Array(Settings.N_COLORS).fill(0).map(() => parseFloat((Math.random() * 2 - 1).toFixed(2)))
+        () => Array(Settings.N_COLORS).fill(0).map(() => parseFloat((Math.random() * 2 - 1).toFixed(2)))
     );
     static frictionHalfLife = 0.040; // Friction half-life
     static frictionFactor = Math.pow(0.5, Settings.dt / Settings.frictionHalfLife); // Friction factor
-    static beta = 0.05; // Beta value for the force function
-    static forceFactor = 5; // Force factor for the force function
+    static beta = 0.3; // Beta value for the force function
+    static forceFactor = 10; // Force factor for the force function
     static wrapAround = true; // Wrap around space
     static box = false; // Box space
     static pause = false; // Pause the simulation
+    static drawEverything = false; // Draw everything
 
     // Canvas settings
     static bgColor = '#111111';
@@ -49,7 +50,8 @@ export default class Settings {
     static setForceFactor(forceFactor) { Settings.forceFactor = forceFactor; }
     static setWrapAround(wrapAround) { Settings.wrapAround = wrapAround; }
     static setBox(box) { Settings.box = box; }
-    static setPause(pause) { Settings.pause = pause; }
+    static setPause(pause) { Settings.pause = pause; } // ToDo: Implement pause
+    static setDrawEverything(drawEverything) { Settings.drawEverything = drawEverything; }
 
     /* PARTICLE SETTERS */
     static setMinSpeed(minSpeed) { Settings.minSpeed = minSpeed; }
@@ -170,6 +172,12 @@ export default class Settings {
                     Box
                 </h4>
             </div>
+            <h4 style="margin-top: 4px; text-align: center;">Draw Options
+            </h4>
+            <h4>
+                <input type="checkbox" id="drawEverything" ${Settings.drawEverything ? "checked" : ""}>
+                DEBUG
+            </h4>
         `;
 
         // Matrix button
@@ -246,7 +254,7 @@ export default class Settings {
                 const colorB = parseInt(e.target.getAttribute("data-colorB"), 10);
                 const value = parseFloat(e.target.value);
                 Settings.setInteraction(colorA, colorB, value);
-                // // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + value);
+                // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + value);
             });
         });
 
@@ -285,7 +293,7 @@ export default class Settings {
                 spanValue.textContent = force.toFixed(2);
 
                 Settings.setInteraction(colorA, colorB, force);
-                // // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + force);
+                // console.log("Settings changed - Settings.interactionMatrix[" + colorA + "][" + colorB + "] = " + force);
             });
         });
         document.getElementById("nParticles").addEventListener("input", (e) => {
@@ -335,13 +343,17 @@ export default class Settings {
         document.getElementById("wrapAround").addEventListener("input", (e) => {
             Settings.setWrapAround(e.target.checked);
             Settings.setBox(!e.target.checked);
-            console.log("Settings changed - Settings.wrapAround = " + Settings.wrapAround);
-            console.log("Settings changed - Settings.box = " + Settings.box);
+            // console.log("Settings changed - Settings.wrapAround = " + Settings.wrapAround);
+            // console.log("Settings changed - Settings.box = " + Settings.box);
         });
         document.getElementById("box").addEventListener("input", (e) => {
             Settings.setBox(e.target.checked);
             Settings.setWrapAround(!e.target.checked);
             // console.log("Settings changed - Settings.box = " + Settings.box);
+        });
+        document.getElementById("drawEverything").addEventListener("input", (e) => {
+            Settings.setDrawEverything(e.target.checked);
+            // console.log("Settings changed - Settings.drawEverything = " + Settings.drawEverything);
         });
     }
 }

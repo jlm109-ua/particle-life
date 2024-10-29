@@ -51,12 +51,27 @@ export default class Particle {
         this.p.fill(this.color); // Set the particle's fill color
         this.p.noStroke(); // Remove any outline from the particle
         this.p.circle(this.position.x, this.position.y, 5); // Draw the particle as a circle with a radius of 5
-        // For debug we will show the particle id
-        this.p.text(this.id, this.position.x - 4, this.position.y - 5);
 
-        // For debug purposes, we draw the direction of the particle with the particle's color
-        this.p.stroke(this.color);
-        this.p.strokeWeight(1);
-        this.p.line(this.position.x, this.position.y, this.position.x + this.velocity.x, this.position.y + this.velocity.y);
+        if (Settings.drawEverything) {
+            // For debug we will show the particle id
+            this.p.text(this.id, this.position.x - 4, this.position.y - 5);
+
+            // For debug purposes, we draw the direction of the particle with the particle's color
+            this.p.stroke(this.color);
+            this.p.strokeWeight(1);
+            this.p.line(this.position.x, this.position.y, this.position.x + this.velocity.x, this.position.y + this.velocity.y);
+
+            // For debug purposes, we draw the rMax circle around the particle
+            this.p.noFill();
+            this.p.stroke(255);
+            this.p.strokeWeight(1);
+            this.p.circle(this.position.x, this.position.y, Settings.rMax);
+
+            // For debug purposes, we draw the beta circle around the particle
+            this.p.noFill();
+            this.p.stroke(this.color);
+            this.p.strokeWeight(1);
+            this.p.circle(this.position.x, this.position.y, Settings.beta);
+        }
     }
 }
