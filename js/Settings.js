@@ -136,6 +136,10 @@ export default class Settings {
                     <input type="number" id="maxSpeed" step="0.01" value="${Settings.maxSpeed}" style="width: 100%;">
                 </h4>
             </div>
+            <h4 style="margin-top: 4px;">
+                <input type="checkbox" id="pause" ${Settings.pause ? "checked" : ""}>
+                Pause
+            </h4>
             <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
                 Time Step:
                 <input type="number" id="dt" value="${Settings.dt}" step="0.01" style="width: 50%;">
@@ -177,10 +181,6 @@ export default class Settings {
             <h4>
                 <input type="checkbox" id="drawEverything" ${Settings.drawEverything ? "checked" : ""}>
                 DEBUG
-            </h4>
-            <h4>
-                <input type="checkbox" id="pause" ${Settings.pause ? "checked" : ""}>
-                Pause
             </h4>
         `;
 
@@ -363,5 +363,31 @@ export default class Settings {
             Settings.setPause(e.target.checked);
             // console.log("Settings changed - Settings.pause = " + Settings.pause);
         });
+    }
+
+    /**
+         * @method toJSON - Converts the settings object to a JSON object.
+         */
+    static toJSON() {
+        return {
+            colors: Settings.colors,
+            N_COLORS: Settings.N_COLORS,
+            minSpeed: Settings.minSpeed,
+            maxSpeed: Settings.maxSpeed,
+            SPEED_CONSTANT: Settings.SPEED_CONSTANT,
+            N_PARTICLES: Settings.N_PARTICLES,
+            dt: Settings.dt,
+            rMax: Settings.rMax,
+            interactionMatrix: Settings.interactionMatrix,
+            frictionHalfLife: Settings.frictionHalfLife,
+            frictionFactor: Settings.frictionFactor,
+            beta: Settings.beta,
+            forceFactor: Settings.forceFactor,
+            wrapAround: Settings.wrapAround,
+            box: Settings.box,
+            pause: Settings.pause,
+            drawEverything: Settings.drawEverything,
+            bgColor: Settings.bgColor
+        };
     }
 }

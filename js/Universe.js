@@ -1,42 +1,14 @@
 import Particle from './Particle.js';
 import Settings from './Settings.js';
 
-/**
- * @class Universe - Represents the universe where particles move.
- */
 export default class Universe {
-    /**
-     * @constructor - Initializes the universe with dimensions and background color.
-     * @param {object} p - The p5 instance for drawing on the canvas.
-     * @param {number} width - Width of the universe (canvas).
-     * @param {number} height - Height of the universe (canvas).
-     * @param {string} bgColor - Background color for the canvas.
-     */
     constructor(p, width, height, bgColor) {
-        this.p = p; // Store the p5 instance
-        this.width = width; // Canvas width
-        this.height = height; // Canvas height
-        this.bgColor = bgColor; // Canvas background color
-        this.particles = []; // Array to hold all particles in the universe
-    }
-
-    /**
-     * @method updateParticles - Updates the particles in the universe.
-     */
-    updateParticles() {
+        this.p = p;
+        this.width = width;
+        this.height = height;
+        this.bgColor = bgColor;
         this.particles = [];
-        for (let id = 0; id < Settings.N_PARTICLES; id++) {
-            // Create a random color for the particle from the color palette on Settings.colors
-            const randomColor = (Math.random() * 5).toFixed(0); // Random color index
-            // const randomColor = this.p.random(0, 5).toFixed(0); // Random color index
-            // console.log("Universe - Random color index is: " + randomColor);
-            const colorHue = Settings.colors[randomColor]; // Random color hue
-            // console.log("Universe - Random color is: " + randomColor);
-            const color = this.p.color(colorHue, 100, 100); // Create a color object
-            // console.log("Universe - Color is: " + color.toString());
-            const particle = new Particle(id, this.p, color);
-            this.particles.push(particle);
-        }
+        this.previousNParticles = Settings.N_PARTICLES; // Store initial N_PARTICLES value
     }
 
     /**
@@ -77,6 +49,11 @@ export default class Universe {
             return 0;
     }
 
+    /**
+     * @method getColor - Returns the index of the color in the Settings.colors array.
+     * @param {object} color - The color to find in the Settings.colors array.
+     * @returns {number} The index of the color in the Settings.colors array.
+     */
     getColor(color) {
         switch (color) {
             case color.toString() === this.p.color(Settings.colors[0]).toString():
@@ -95,100 +72,135 @@ export default class Universe {
     }
 
     /**
-     * @method update - Updates all particles in the universe.
+     * @method updateParticles - Updates the particles in the universe only if the particle count has changed.
+     */
+    updateParticles() {
+        if (this.particles.length !== Settings.N_PARTICLES) {
+            console.log(`Updating particles. New count: ${Settings.N_PARTICLES}`);
+            this.particles = []; // Reset the particle array
+
+            // Create new particles
+            for (let id = 0; id < Settings.N_PARTICLES; id++) {
+                const randomColor = Math.floor(Math.random() * Settings.colors.length);
+                const colorHue = Settings.colors[randomColor];
+                const color = this.p.color(colorHue, 100, 100); // Color in HSB mode
+                const particle = new Particle(id, this.p, color);
+                this.particles.push(particle);
+            }
+            console.log("Particles updated successfully.");
+        }
+    }
+
+    /**
+     * @method update - Updates all particles in the universe based on real-time settings.
      */
     update() {
-        if (Settings.pause) return; // Skip updating if the simulation is paused
-
-        // Check if the number of particles has changed
-        if (this.particles.length !== Settings.N_PARTICLES) {
-            this.updateParticles();
+        if (Settings.pause) {
+            console.log("Simulation paused. Skipping update.");
+            return; // Skip updating if the simulation is paused
         }
 
-        // Check if the background color has changed
+        // Debug: check and log all variables from Settings
+        const settings = Settings.toJSON();
+        console.log("Universe - Current Settings:", settings);
+
+        // Update background color immediately if it has changed
         if (this.bgColor !== Settings.bgColor) {
+            console.log(`Background color changed to: ${Settings.bgColor}`);
             this.bgColor = Settings.bgColor;
             this.p.background(this.bgColor);
         }
 
-        this.particles.forEach((particleA, i) => { // Loop through all particles in the universe: particleA is the current particle and i is its index
-            let totalForceX = 0; // Total force in the x direction
-            let totalForceY = 0; // Total force in the y direction
-            let totalForces = this.p.createVector(totalForceX, totalForceY); // Vector to store the total force acting on the particle
+        // Update particles if the number of particles has changed
+        if (this.previousNParticles !== Settings.N_PARTICLES) {
+            console.log("Particle count changed, updating particles.");
+            this.updateParticles();
+            this.previousNParticles = Settings.N_PARTICLES;
+        }
 
-            this.particles.forEach((particleB, j) => { // Loop through all particles in the universe: particleB is the other particle and j is its index
-                if (j === i) return; // Skip the current particle
-                // console.log("Universe - \tParticle " + particleA.id + " position is [" + particleA.position.x + "," + particleA.position.y + "]");
-                const rx = particleB.position.x - particleA.position.x; // Calculate the x distance between the particles
-                const ry = particleB.position.y - particleA.position.y; // Calculate the y distance between the particles
-                const r = Math.hypot(rx, ry); // Calculate the distance between the particles
-                // console.log("Universe - \tParticle " + particleB.id + " position is: [" + particleB.position.x + "," + particleB.position.y + "]");
-                // console.log("Universe - \tDistance between particles " + particleA.id + " and " + particleB.id + " is: " + r);
+        // Main update loop for each particle
+        this.particles.forEach((particleA, i) => {
+            let totalForceX = 0;
+            let totalForceY = 0;
 
-                // console.log("Conditions for interaction: (r > 0) and (r < Settings.rMax) are " + (r > 0) + " and " + (r < Settings.rMax) + " so the interaction is: " + (r > 0 && r < Settings.rMax));
+            // Calculate forces based on interaction with every other particle
+            this.particles.forEach((particleB, j) => {
+                if (i === j) return; // Skip self-interaction
+
+                const rx = particleB.position.x - particleA.position.x;
+                const ry = particleB.position.y - particleA.position.y;
+                const r = Math.hypot(rx, ry); // Calculate distance
+
                 if (r > 0 && r < Settings.rMax) {
                     const colorA = this.getColor(particleA.color);
-                    // console.log("Universe - Color A is: " + colorA);
                     const colorB = this.getColor(particleB.color);
-                    // console.log("Universe - Color B is: " + colorB);
-                    const f = this.force(r / Settings.rMax, Settings.interactionMatrix[colorA][colorB]); // Calculate the force between the particles
-                    // console.log("Universe - Force between particles " + particleA.id + " and " + particleB.id + " is: " + f);
-                    totalForceX += rx / r * f; // Calculate the x component of the force
-                    totalForceY += ry / r * f; // Calculate the y component of the force
-                    totalForces.add(this.p.createVector(totalForceX, totalForceY)); // Add the force to the total force acting on the particle
+                    const f = this.force(r / Settings.rMax, Settings.interactionMatrix[colorA][colorB]);
+
+                    // Accumulate forces
+                    totalForceX += rx / r * f;
+                    totalForceY += ry / r * f;
                 }
             });
 
-            totalForceX *= Settings.rMax * Settings.forceFactor; // Scale the x component of the force
-            totalForceY *= Settings.rMax * Settings.forceFactor; // Scale the y component of the force
+            // Apply force scaling and friction
+            totalForceX *= Settings.rMax * Settings.forceFactor;
+            totalForceY *= Settings.rMax * Settings.forceFactor;
 
-            particleA.velocity.x *= Settings.frictionFactor; // Apply friction to the x component of the velocity
-            particleA.velocity.y *= Settings.frictionFactor; // Apply friction to the y component of the velocity
+            // Apply friction factor
+            particleA.velocity.x *= Settings.frictionFactor;
+            particleA.velocity.y *= Settings.frictionFactor;
 
-            particleA.velocity.x += totalForceX * Settings.dt; // Update the x component of the velocity
-            particleA.velocity.y += totalForceY * Settings.dt; // Update the y component of the velocity
+            // Adjust velocity with the calculated force and timestep
+            particleA.velocity.x += totalForceX * Settings.dt;
+            particleA.velocity.y += totalForceY * Settings.dt;
 
-            particleA.velocity.x *= Settings.SPEED_CONSTANT; // Apply the speed constant to the x component of the velocity
-            particleA.velocity.y *= Settings.SPEED_CONSTANT; // Apply the speed constant to the y component of the velocity
+            // Apply speed constant from Settings
+            particleA.velocity.x *= Settings.SPEED_CONSTANT;
+            particleA.velocity.y *= Settings.SPEED_CONSTANT;
 
-            particleA.position.add(particleA.velocity); // Move the particle by adding its velocity to its position
+            // Update position with the new velocity
+            particleA.position.add(particleA.velocity);
 
-            // Check if the particle should wrap around the canvas
+            // Handle wrap-around or bounding box conditions
             if (Settings.wrapAround) {
+                // Wrap-around effect when particle exits boundaries
                 if (particleA.position.x < 0) particleA.position.x = this.p.width;
                 if (particleA.position.x > this.p.width) particleA.position.x = 0;
                 if (particleA.position.y < 0) particleA.position.y = this.p.height;
                 if (particleA.position.y > this.p.height) particleA.position.y = 0;
             }
 
-            // Check if the particle should bounce off the canvas edges
             if (Settings.box) {
+                // Bounding box effect to keep particles within boundaries
                 if (particleA.position.x < 0) {
                     particleA.position.x = 0;
                     particleA.velocity.x *= -1;
+                    console.log(`Particle ${particleA.id} hit left boundary.`);
                 }
                 if (particleA.position.x > this.p.width) {
                     particleA.position.x = this.p.width;
                     particleA.velocity.x *= -1;
+                    console.log(`Particle ${particleA.id} hit right boundary.`);
                 }
                 if (particleA.position.y < 0) {
                     particleA.position.y = 0;
                     particleA.velocity.y *= -1;
+                    console.log(`Particle ${particleA.id} hit top boundary.`);
                 }
                 if (particleA.position.y > this.p.height) {
                     particleA.position.y = this.p.height;
                     particleA.velocity.y *= -1;
+                    console.log(`Particle ${particleA.id} hit bottom boundary.`);
                 }
             }
         });
     }
 
-
     /**
      * @method render - Renders the universe and all particles.
      */
     render() {
-        this.p.background(this.bgColor); // Clear the canvas with the background color
-        this.particles.forEach(particle => particle.draw()); // Draw each particle on the canvas
+        this.p.background(this.bgColor);
+        this.particles.forEach(particle => particle.draw());
     }
 }
