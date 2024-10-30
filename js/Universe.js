@@ -15,7 +15,7 @@ export default class Universe {
      * @method setup - Sets up the canvas and creates particles.
      */
     setup() {
-        // console.log("p5.HSB = " + this.p.HSB);
+        // // console.log("p5.HSB = " + this.p.HSB);
         this.p.colorMode(this.p.HSB, 100, 100); // Set the color mode to HSB: Hue, Saturation, Brightness
         this.p.createCanvas(this.width, this.height); // Create the canvas with specified dimensions
         this.p.background(this.bgColor); // Set the background color
@@ -76,7 +76,7 @@ export default class Universe {
      */
     updateParticles() {
         if (this.particles.length !== Settings.N_PARTICLES) {
-            console.log(`Updating particles. New count: ${Settings.N_PARTICLES}`);
+            // console.log(`Updating particles. New count: ${Settings.N_PARTICLES}`);
             this.particles = []; // Reset the particle array
 
             // Create new particles
@@ -87,7 +87,7 @@ export default class Universe {
                 const particle = new Particle(id, this.p, color);
                 this.particles.push(particle);
             }
-            console.log("Particles updated successfully.");
+            // console.log("Particles updated successfully.");
         }
     }
 
@@ -96,24 +96,24 @@ export default class Universe {
      */
     update() {
         if (Settings.pause) {
-            console.log("Simulation paused. Skipping update.");
+            // console.log("Simulation paused. Skipping update.");
             return; // Skip updating if the simulation is paused
         }
 
         // Debug: check and log all variables from Settings
         const settings = Settings.toJSON();
-        console.log("Universe - Current Settings:", settings);
+        // console.log("Universe - Current Settings:", settings);
 
         // Update background color immediately if it has changed
         if (this.bgColor !== Settings.bgColor) {
-            console.log(`Background color changed to: ${Settings.bgColor}`);
+            // console.log(`Background color changed to: ${Settings.bgColor}`);
             this.bgColor = Settings.bgColor;
             this.p.background(this.bgColor);
         }
 
         // Update particles if the number of particles has changed
         if (this.previousNParticles !== Settings.N_PARTICLES) {
-            console.log("Particle count changed, updating particles.");
+            // console.log("Particle count changed, updating particles.");
             this.updateParticles();
             this.previousNParticles = Settings.N_PARTICLES;
         }
@@ -175,22 +175,22 @@ export default class Universe {
                 if (particleA.position.x < 0) {
                     particleA.position.x = 0;
                     particleA.velocity.x *= -1;
-                    console.log(`Particle ${particleA.id} hit left boundary.`);
+                    // console.log(`Particle ${particleA.id} hit left boundary.`);
                 }
                 if (particleA.position.x > this.p.width) {
                     particleA.position.x = this.p.width;
                     particleA.velocity.x *= -1;
-                    console.log(`Particle ${particleA.id} hit right boundary.`);
+                    // console.log(`Particle ${particleA.id} hit right boundary.`);
                 }
                 if (particleA.position.y < 0) {
                     particleA.position.y = 0;
                     particleA.velocity.y *= -1;
-                    console.log(`Particle ${particleA.id} hit top boundary.`);
+                    // console.log(`Particle ${particleA.id} hit top boundary.`);
                 }
                 if (particleA.position.y > this.p.height) {
                     particleA.position.y = this.p.height;
                     particleA.velocity.y *= -1;
-                    console.log(`Particle ${particleA.id} hit bottom boundary.`);
+                    // console.log(`Particle ${particleA.id} hit bottom boundary.`);
                 }
             }
         });

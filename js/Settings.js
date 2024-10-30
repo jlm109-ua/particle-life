@@ -14,9 +14,9 @@ export default class Settings {
     static SPEED_CONSTANT = 0.07; // Speed constant for all particles
 
     // Universe settings
-    static N_PARTICLES = 0; // Number of particles
-    static dt = 0.06; // Time step
-    static rMax = 10; // Maximum interaction radius
+    static N_PARTICLES = 80; // Number of particles
+    static dt = 0.2; // Time step
+    static rMax = 100; // Maximum interaction radius
     static interactionMatrix = Array.from( // Interaction matrix
         { length: Settings.N_COLORS },
         // Initialized to 0. Uncomment and comment the next line to initialize to 0
@@ -25,9 +25,9 @@ export default class Settings {
         () => Array(Settings.N_COLORS).fill(0).map(() => parseFloat((Math.random() * 2 - 1).toFixed(2)))
     );
     static frictionHalfLife = 0.040; // Friction half-life
-    static frictionFactor = Math.pow(0.5, Settings.dt / Settings.frictionHalfLife); // Friction factor
+    static frictionFactor = 0.92; // Friction factor
     static beta = 0.3; // Beta value for the force function
-    static forceFactor = 10; // Force factor for the force function
+    static forceFactor = 2; // Force factor for the force function
     static wrapAround = true; // Wrap around space
     static box = false; // Box space
     static pause = false; // Pause the simulation
@@ -136,10 +136,16 @@ export default class Settings {
                     <input type="number" id="maxSpeed" step="0.01" value="${Settings.maxSpeed}" style="width: 100%;">
                 </h4>
             </div>
-            <h4 style="margin-top: 4px;">
-                <input type="checkbox" id="pause" ${Settings.pause ? "checked" : ""}>
-                Pause
-            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; text-align: center;">
+                <h4>
+                    <input type="checkbox" id="pause" ${Settings.pause ? "checked" : ""}>
+                    Pause
+                </h4>
+                        <h4>
+                    <input type="checkbox" id="drawEverything" ${Settings.drawEverything ? "checked" : ""}>
+                    DEBUG
+                </h4>
+            </div>
             <h4 style="margin-top: 4px; display: flex; justify-content: space-between;">
                 Time Step:
                 <input type="number" id="dt" value="${Settings.dt}" step="0.01" style="width: 50%;">
@@ -176,12 +182,6 @@ export default class Settings {
                     Box
                 </h4>
             </div>
-            <h4 style="margin-top: 4px; text-align: center;">Draw Options
-            </h4>
-            <h4>
-                <input type="checkbox" id="drawEverything" ${Settings.drawEverything ? "checked" : ""}>
-                DEBUG
-            </h4>
         `;
 
         // Matrix button
