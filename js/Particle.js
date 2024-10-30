@@ -23,24 +23,6 @@ export default class Particle {
     }
 
     /**
-     * @method update - Updates the particle's position based on its velocity and total force.
-     */
-    update() {
-        // Debug 
-        // console.log("Particle - Updating velocity from (" + this.xSpeed + "," + this.ySpeed + ") to (" + this.xSpeed * Settings.SPEED_CONSTANT + "," + this.ySpeed * Settings.SPEED_CONSTANT + ")");
-        const velXdt = (this.xSpeed * Settings.dt) * Settings.SPEED_CONSTANT; // Calculate the change in x position
-        const velYdt = (this.ySpeed * Settings.dt) * Settings.SPEED_CONSTANT; // Calculate the change in y position
-        this.velocity = this.p.createVector(velXdt, velYdt); // Update the velocity vector
-        this.position.add(this.velocity); // Move the particle by adding its velocity to its position
-
-        // The particle space will be a wrap-around space
-        if (this.position.x < 0) this.position.x = this.p.width;
-        if (this.position.x > this.p.width) this.position.x = 0;
-        if (this.position.y < 0) this.position.y = this.p.height;
-        if (this.position.y > this.p.height) this.position.y = 0;
-    }
-
-    /**
      * @method draw - Renders the particle as a circle on the canvas.
      */
     draw() {

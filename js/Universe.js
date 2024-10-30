@@ -98,6 +98,8 @@ export default class Universe {
      * @method update - Updates all particles in the universe.
      */
     update() {
+        if (Settings.pause) return; // Skip updating if the simulation is paused
+
         // Check if the number of particles has changed
         if (this.particles.length !== Settings.N_PARTICLES) {
             this.updateParticles();
@@ -109,19 +111,12 @@ export default class Universe {
             this.p.background(this.bgColor);
         }
 
-        /* // Check if the speed constant has changed (it is set to 1 at default)
-        if (Settings.SPEED_CONSTANT !== null | Settings.SPEED_CONSTANT !== NaN) {
-            this.particles.forEach((particle) => {
-                particle.update();
-            })
-        } */
-
-        this.particles.forEach((particleA, i) => {
+        this.particles.forEach((particleA, i) => { // Loop through all particles in the universe: particleA is the current particle and i is its index
             let totalForceX = 0; // Total force in the x direction
             let totalForceY = 0; // Total force in the y direction
             let totalForces = this.p.createVector(totalForceX, totalForceY); // Vector to store the total force acting on the particle
 
-            this.particles.forEach((particleB, j) => {
+            this.particles.forEach((particleB, j) => { // Loop through all particles in the universe: particleB is the other particle and j is its index
                 if (j === i) return; // Skip the current particle
                 // console.log("Universe - \tParticle " + particleA.id + " position is [" + particleA.position.x + "," + particleA.position.y + "]");
                 const rx = particleB.position.x - particleA.position.x; // Calculate the x distance between the particles

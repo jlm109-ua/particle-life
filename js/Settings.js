@@ -50,7 +50,7 @@ export default class Settings {
     static setForceFactor(forceFactor) { Settings.forceFactor = forceFactor; }
     static setWrapAround(wrapAround) { Settings.wrapAround = wrapAround; }
     static setBox(box) { Settings.box = box; }
-    static setPause(pause) { Settings.pause = pause; } // ToDo: Implement pause
+    static setPause(pause) { Settings.pause = pause; }
     static setDrawEverything(drawEverything) { Settings.drawEverything = drawEverything; }
 
     /* PARTICLE SETTERS */
@@ -177,6 +177,10 @@ export default class Settings {
             <h4>
                 <input type="checkbox" id="drawEverything" ${Settings.drawEverything ? "checked" : ""}>
                 DEBUG
+            </h4>
+            <h4>
+                <input type="checkbox" id="pause" ${Settings.pause ? "checked" : ""}>
+                Pause
             </h4>
         `;
 
@@ -354,6 +358,10 @@ export default class Settings {
         document.getElementById("drawEverything").addEventListener("input", (e) => {
             Settings.setDrawEverything(e.target.checked);
             // console.log("Settings changed - Settings.drawEverything = " + Settings.drawEverything);
+        });
+        document.getElementById("pause").addEventListener("input", (e) => {
+            Settings.setPause(e.target.checked);
+            // console.log("Settings changed - Settings.pause = " + Settings.pause);
         });
     }
 }
