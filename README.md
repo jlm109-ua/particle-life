@@ -15,7 +15,7 @@ A particle will have the following properties:
 
 Also, a particle will only be **affected by other particles closer than one distance unit**. 
 
-For a pair of particles i and j inside this _one distance unit_ diameter, we calculate the distance (r) between these two particles by:
+For a pair of particles i and j inside this _one distance unit_ diameter, we calculate the distance ($r$) between these two particles by:
 
 1. Substracting the coordinates from the vectors: $\overrightarrow{r_{i,j}} = \overrightarrow{x_j} - \overrightarrow{x_i}$
 2. Taking the length of the vector: $r_{i,j} = \|\| \overrightarrow{r_{i,j}} \|\|$
