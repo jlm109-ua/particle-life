@@ -43,9 +43,10 @@ export default class Universe {
     force(r, a) {
         if (r < Settings.beta)
             return r / Settings.beta - 1;
-        else if (Settings.beta < r && r < 1)
-            return a + (1 - Math.abs(2 * r - 1 - Settings.beta) / (1 - Settings.beta));
-        else
+        else if (Settings.beta < r && r < 1) {
+            const forceValue = a + (1 - Math.abs(2 * r - 1 - Settings.beta) / (1 - Settings.beta));
+            return forceValue * (a >= 0 ? 1 : -1); // Adjust for attraction or repulsion
+        } else
             return 0;
     }
 
