@@ -11,7 +11,7 @@ export default class Settings {
     static N_COLORS = this.colors.length; // Number of colors
     static minSpeed = -1; // Minimum speed a particle can have
     static maxSpeed = 1; // Maximum speed a particle can have
-    static SPEED_CONSTANT = 0.07; // Speed constant for all particles
+    static SPEED_CONSTANT = 0.4; // Speed constant for all particles
 
     // Universe settings
     static N_PARTICLES = 80; // Number of particles
